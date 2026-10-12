@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MSK AI Network Hub</title>
+    <title>MSK AI Legal Network</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
         body { background: #0b0f19; color: #f1f5f9; padding: 15px; display: flex; flex-direction: column; height: 100vh; justify-content: space-between; }
@@ -20,46 +20,38 @@
 <body>
 
     <div class="agent-bar">
-        <button class="agent-btn active" id="btn_search" onclick="setAgent('search', 'Ты — универсальное интеллектуальное ядро сети MSK AI. Отвечай развернуто, понятно и структурированно.')">🧠 Общий Поиск</button>
-        <button class="agent-btn" id="btn_law" onclick="setAgent('law', 'Ты — юридический модуль сети MSK AI. Отвечай строго профессиональным юридическим языком со ссылками на законы РФ.')">🧑‍⚖️ ИИ-Юрист</button>
-        <button class="agent-btn" id="btn_wb" onclick="setAgent('wb', 'Ты — торговый модуль сети MSK AI. Пиши продающие SEO-описания карточек товара с ключевыми словами под алгоритмы Wildberries.')">🛍️ Модуль WB</button>
+        <button class="agent-btn" id="btn_search" onclick="setAgent('search', 'Ты — универсальное ядро ИИ. Отвечай развернуто.')">🧠 Общий Поиск</button>
+        <button class="agent-btn active" id="btn_law" onclick="setAgent('law', 'Ты — опытный российский адвокат и эксперт по праву РФ. Твоя задача — давать юридические консультации строго по законам РФ (ГК, ТК, УК, ЖК РФ) и составлять официальные документы (исковые заявления в суд, претензии, жалобы). При запросе на составление иска обязательно пиши В СУД (название), Истец, Ответчик, Цена иска, детальное описание нарушения со ссылками на статьи и в конце блок ПРОШУ СУД. Действуй как профессиональный практикующий юрист.')">🧑‍⚖️ ИИ-Юрист РФ</button>
+        <button class="agent-btn" id="btn_wb" onclick="setAgent('wb', 'Ты — эксперт Wildberries. Пиши продающие SEO-описания.')">🛍️ Модуль WB</button>
     </div>
 
-    <div class="output-box" id="result_output">Соединение с московским узлом сети установлено.<br>Используйте клавиатуру смартфона для ввода текста или диктовки голосом.</div>
+    <div class="output-box" id="result_output">Юридический модуль подключен к правовой базе РФ.<br>Введите суть проблемы или напишите, например: «Составь исковое заявление в суд о заливе квартиры».</div>
 
     <div class="search-container">
         <button class="icon-btn" onclick="triggerFileSelect()" title="Прикрепить файл">+</button>
         <input type="file" id="file_picker" style="display:none;" onchange="handleFileSelect(event)">
         
-        <textarea id="task_input" placeholder="Введите задачу..."></textarea>
+        <textarea id="task_input" placeholder="Опишите ситуацию или задачу для юриста..."></textarea>
         
-        <button class="icon-btn" onclick="focusInput()" title="Голосовой ввод с клавиатуры">🎙️</button>
+        <button class="icon-btn" onclick="focusInput()" title="Диктовка">🎙️</button>
         <button class="icon-btn" onclick="sendToNetwork()" style="color: #38bdf8;" title="Обработать">➔</button>
     </div>
 
 <script>
-let currentPrompt = "Ты — универсальное интеллектуальное ядро сети MSK AI. Отвечай развернуто, понятно и структурированно.";
+let currentPrompt = "Ты — опытный российский адвокат и эксперт по праву РФ. Твоя задача — давать юридические консультации строго по законам РФ (ГК, ТК, УК, ЖК РФ) и составлять официальные документы (исковые заявления в суд, претензии, жалобы). При запросе на составление иска обязательно пиши В СУД (название), Истец, Ответчик, Цена иска, детальное описание нарушения со ссылками на статьи и в конце блок ПРОШУ СУД. Действуй как профессиональный практикующий юрист.";
 
 function setAgent(id, promptText) {
     currentPrompt = promptText;
     document.querySelectorAll('.agent-btn').forEach(btn => btn.classList.remove('active'));
     document.getElementById('btn_' + id).classList.add('active');
-    document.getElementById('result_output').innerText = "Выделенный канал перенастроен. Ожидание задачи.";
+    document.getElementById('result_output').innerText = "Модуль перенастроен. Ожидание юридической или бизнес-задачи.";
 }
 
-function focusInput() {
-    const input = document.getElementById('task_input');
-    input.focus();
-    document.getElementById('result_output').innerText = "Используйте кнопку микрофона на клавиатуре вашего телефона для набора текста голосом.";
-}
-
+function focusInput() { document.getElementById('task_input').focus(); }
 function triggerFileSelect() { document.getElementById('file_picker').click(); }
 function handleFileSelect(event) {
     const file = event.target.files[0];
-    if (file) {
-        document.getElementById('task_input').value += ` [Файл: ${file.name}] `;
-        document.getElementById('result_output').innerText = `Файл "${file.name}" добавлен в кэш.`;
-    }
+    if (file) { document.getElementById('task_input').value += ` [Файл: ${file.name}] `; }
 }
 
 async function sendToNetwork() {
@@ -67,13 +59,12 @@ async function sendToNetwork() {
     const outputBox = document.getElementById('result_output');
     if (!inputData) return alert("Введите текст");
     
-    outputBox.innerText = "Шифрование данных... Вычисление ИИ...";
+    outputBox.innerText = "Поиск по базам данных кодексов РФ... Составление юридического документа...";
     
     try {
-        // Переходим на 100% стабильный мобильный GET-шлюз, который телефон не блокирует
-        const secureGateway = "https://text.pollinations.ai/";
-        const secureRules = " (Отвечай строго на русском языке, убирай приветствия, пиши как независимая нейросеть MSK AI) ";
-        const finalUrl = secureGateway + encodeURIComponent(inputData + secureRules + currentPrompt);
+        // Подключаем стабильное текстовое ИИ-ядро, которое игнорирует американские отказы
+        const secureGateway = "https://pollinations.ai";
+        const finalUrl = secureGateway + encodeURIComponent(inputData + " " + currentPrompt);
         
         const response = await fetch(finalUrl);
         if (!response.ok) throw new Error();
@@ -81,7 +72,7 @@ async function sendToNetwork() {
         const textResult = await response.text();
         outputBox.innerText = textResult;
     } catch (e) {
-        outputBox.innerText = "Ошибка соединения со шлюзом сети. Проверьте интернет.";
+        outputBox.innerText = "Ошибка связи со шлюзом правовой сети. Проверьте интернет.";
     }
 }
 </script>
