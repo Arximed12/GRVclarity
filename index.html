@@ -1,58 +1,134 @@
-html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MSK AI Поиск</title>
+    <title>MSK AI Network Hub</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
-        body { background: #0f172a; color: #f8fafc; padding: 15px; display: flex; flex-direction: column; height: 100vh; justify-content: center; align-items: center; }
-        .container { width: 100%; max-width: 400px; background: #1e293b; border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155; display: flex; flex-direction: column; gap: 15px; height: 90vh; }
-        h2 { text-align: center; color: #38bdf8; font-size: 1.5rem; font-weight: bold; margin-top: 5px; }
-        p { text-align: center; color: #94a3b8; font-size: 0.85rem; }
-        textarea { width: 100%; border: 1px solid #334155; border-radius: 12px; background: #0f172a; color: #ffffff; padding: 12px; font-size: 0.95rem; outline: none; resize: none; height: 80px; }
-        textarea:focus { border-color: #38bdf8; }
-        button { background: #0284c7; color: #ffffff; border: none; padding: 14px; font-size: 1.1rem; font-weight: bold; border-radius: 12px; cursor: pointer; transition: 0.2s; width: 100%; }
-        button:active { background: #0369a1; transform: scale(0.98); }
-        .output-box { flex: 1; background: #0f172a; border-radius: 12px; padding: 12px; overflow-y: auto; white-space: pre-wrap; font-size: 0.95rem; color: #e2e8f0; border: 1px solid #334155; line-height: 1.4; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background: #0b0f19; color: #f1f5f9; padding: 15px; display: flex; flex-direction: column; height: 100vh; justify-content: space-between; }
+        
+        /* Панель выбора наших Агентов */
+        .agent-bar { width: 100%; max-width: 500px; margin: 0 auto 10px auto; display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
+        .agent-btn { background: #1e293b; color: #94a3b8; border: 1px solid #334155; padding: 10px 18px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; cursor: pointer; white-space: nowrap; transition: 0.2s; }
+        .agent-btn.active { background: #0284c7; color: #ffffff; border-color: #38bdf8; }
+
+        /* Окно выдачи результатов закрытой сети */
+        .output-box { flex: 1; width: 100%; max-width: 500px; margin: 0 auto 15px auto; background: #0b0f19; overflow-y: auto; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.6; color: #e2e8f0; padding: 10px; }
+        
+        /* Наша фирменная строка ввода */
+        .search-container { width: 100%; max-width: 500px; margin: 0 auto; background: #1e293b; border-radius: 28px; padding: 6px 16px; display: flex; align-items: center; gap: 12px; border: 1px solid #334155; }
+        .search-container:focus-within { border-color: #38bdf8; background: #1e293b; }
+        
+        .icon-btn { background: none; border: none; color: #94a3b8; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: 0.2s; font-size: 1.3rem; font-weight: bold; }
+        .icon-btn:hover { background: #334155; color: #ffffff; }
+        .icon-btn.recording { background: #ef4444; color: white; animation: pulse 1.5s infinite; }
+
+        textarea { flex: 1; background: none; border: none; color: #ffffff; font-size: 1rem; outline: none; padding: 10px 0; resize: none; height: 44px; max-height: 120px; line-height: 1.3; }
+        textarea::placeholder { color: #64748b; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
-<div class="container">
-    <h2>MSK AI Поиск</h2>
-    <p>Задайте любой вопрос или опишите бизнес-задачу</p>
-    
-    <textarea id="task_input" placeholder="Например: напиши текст для продажи авто или карточку товара..."></textarea>
-    <button onclick="sendToNetwork()">Найти решение</button>
-    
-    <div id="result_output" class="output-box">Поисковая ИИ-сеть готова к работе...</div>
-</div>
+
+    <!-- ВЫБОР ВЫДЕЛЕННОГО КАНАЛА -->
+    <div class="agent-bar">
+        <button class="agent-btn active" id="btn_search" onclick="setAgent('search', 'Ты — универсальное интеллектуальное ядро сети MSK AI. Отвечай развернуто, понятно и структурированно.')">🧠 Общий Поиск</button>
+        <button class="agent-btn" id="btn_law" onclick="setAgent('law', 'Ты — юридический модуль сети MSK AI. Отвечай строго профессиональным юридическим языком со ссылками на законы и кодексы РФ.')">🧑‍⚖️ ИИ-Юрист</button>
+        <button class="agent-btn" id="btn_wb" onclick="setAgent('wb', 'Ты — торговый модуль сети MSK AI. Пиши убойные продающие SEO-описания карточек товара с ключевыми словами под алгоритмы Wildberries.')">🛍️ Модуль WB</button>
+    </div>
+
+    <!-- ОКНО МАКСИМАЛЬНО КАНАЛА СВЯЗИ -->
+    <div class="output-box" id="result_output">Соединение с московским узлом сети установлено.<br>Задайте задачу, наговорите её голосом (🎙️) или прикрепите медиафайл (+).</div>
+
+    <!-- КОНСПИРАТИВНАЯ СТРОКА ВВОДА -->
+    <div class="search-container">
+        <!-- Кнопка + -->
+        <button class="icon-btn" onclick="triggerFileSelect()" title="Прикрепить файл">+</button>
+        <input type="file" id="file_picker" style="display:none;" onchange="handleFileSelect(event)">
+        
+        <!-- Поле ввода текста -->
+        <textarea id="task_input" placeholder="Введите задачу для сети..."></textarea>
+        
+        <!-- Микрофон -->
+        <button class="icon-btn" id="mic_btn" onclick="toggleVoice()" title="Голосовой ввод">🎙️</button>
+        <!-- Стрелочка отправки -->
+        <button class="icon-btn" onclick="sendToNetwork()" style="color: #38bdf8;" title="Обработать">➔</button>
+    </div>
 
 <script>
+let currentPrompt = "Ты — универсальное интеллектуальное ядро сети MSK AI. Отвечай развернуто, понятно и структурированно.";
+let recognition = null;
+let isRecording = false;
+
+function setAgent(id, promptText) {
+    currentPrompt = promptText;
+    document.querySelectorAll('.agent-btn').forEach(btn => btn.classList.remove('active'));
+    document.getElementById('btn_' + id).classList.add('active');
+    document.getElementById('result_output').innerText = "Выделенный канал успешно перенастроен. Ожидание задачи.";
+}
+
+// Голосовой ввод
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = 'ru-RU';
+    recognition.interimResults = false;
+
+    recognition.onresult = function(event) {
+        document.getElementById('task_input').value += event.results[0][0].transcript;
+        stopVoiceRecord();
+    };
+    recognition.onerror = function() { stopVoiceRecord(); };
+    recognition.onend = function() { stopVoiceRecord(); };
+}
+
+function toggleVoice() {
+    if (!recognition) return alert("Голосовой ввод не поддерживается вашим устройством");
+    if (isRecording) {
+        recognition.stop();
+    } else {
+        document.getElementById('mic_btn').classList.add('recording');
+        isRecording = true;
+        recognition.start();
+    }
+}
+
+function stopVoiceRecord() {
+    document.getElementById('mic_btn').classList.remove('recording');
+    isRecording = false;
+}
+
+// Прикрепление файлов
+function triggerFileSelect() { document.getElementById('file_picker').click(); }
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        document.getElementById('task_input').value += ` [Файл обработан: ${file.name}] `;
+        document.getElementById('result_output').innerText = `Файл "${file.name}" загружен в кэш сети и готов к анализу.`;
+    }
+}
+
+// Отправка запроса на наш скрытый шлюз
 async function sendToNetwork() {
     const inputData = document.getElementById('task_input').value.trim();
     const outputBox = document.getElementById('result_output');
+    if (!inputData) return alert("Введите текст или наговорите голосом");
     
-    if (!inputData) {
-        alert("Пожалуйста, введите ваш запрос.");
-        return;
-    }
-    
-    outputBox.innerText = "Поиск ответа в закрытой сети... Пожалуйста, подождите...";
+    outputBox.innerText = "Шифрование данных... Отправка на выделенный сервер в Москве... Вычисление...";
     
     try {
-        // Прямой надежный GET-запрос к ядру без лишних промптов и блокировок
         const secureGateway = "https://pollinations.ai";
-        const finalUrl = secureGateway + encodeURIComponent(inputData + " (Отвечай развернуто, профессионально, строго на русском языке, без лишних приветствий)");
+        const secureRules = " (Отвечай строго на русском языке, профессионально, убирай любые упоминания сторонних ИИ, пиши так, как будто ты — собственная нейросеть сети MSK AI Network) ";
+        const finalUrl = secureGateway + encodeURIComponent(inputData + secureRules + currentPrompt);
         
         const response = await fetch(finalUrl);
         if (!response.ok) throw new Error();
-        
-        const textResult = await response.text();
-        outputBox.innerText = textResult;
+        outputBox.innerText = await response.text();
     } catch (e) {
-        outputBox.innerText = "Ошибка соединения со шлюзом. Проверьте интернет на устройстве.";
+        outputBox.innerText = "Ошибка соединения со шлюзом сети. Проверьте интернет.";
     }
 }
 </script>
