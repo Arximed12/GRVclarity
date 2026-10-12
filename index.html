@@ -4,97 +4,55 @@ html
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MSK AI Market</title>
+    <title>MSK AI Поиск</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-        body { background: #0f172a; color: #f8fafc; padding: 15px; display: flex; flex-direction: column; min-height: 100vh; justify-content: center; align-items: center; }
-        .container { width: 100%; max-width: 400px; background: #1e293b; border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155; display: flex; flex-direction: column; gap: 15px; }
-        .hidden { display: none !important; }
-        h2 { text-align: center; color: #38bdf8; font-size: 1.3rem; font-weight: bold; }
-        p { text-align: center; color: #94a3b8; font-size: 0.85rem; line-height: 1.4; }
-        input, textarea { width: 100%; border: 1px solid #334155; border-radius: 12px; background: #0f172a; color: #ffffff; padding: 12px; font-size: 0.95rem; outline: none; }
-        .btn { background: #0284c7; color: #ffffff; border: none; padding: 12px; font-size: 1rem; font-weight: bold; border-radius: 12px; cursor: pointer; transition: 0.2s; width: 100%; }
-        .btn:active { background: #0369a1; transform: scale(0.98); }
-        .menu-grid { display: flex; flex-direction: column; gap: 10px; }
-        .service-card { background: #334155; border: 1px solid #475569; padding: 15px; border-radius: 12px; display: flex; flex-direction: column; gap: 8px; }
-        .service-title { font-weight: bold; font-size: 1rem; color: #38bdf8; }
-        .service-price { font-size: 0.8rem; color: #10ac84; font-weight: bold; }
-        .output-box { height: 180px; background: #0f172a; border-radius: 12px; padding: 12px; overflow-y: auto; white-space: pre-wrap; font-size: 0.9rem; color: #e2e8f0; border: 1px solid #334155; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+        body { background: #0f172a; color: #f8fafc; padding: 15px; display: flex; flex-direction: column; height: 100vh; justify-content: center; align-items: center; }
+        .container { width: 100%; max-width: 400px; background: #1e293b; border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155; display: flex; flex-direction: column; gap: 15px; height: 90vh; }
+        h2 { text-align: center; color: #38bdf8; font-size: 1.5rem; font-weight: bold; margin-top: 5px; }
+        p { text-align: center; color: #94a3b8; font-size: 0.85rem; }
+        textarea { width: 100%; border: 1px solid #334155; border-radius: 12px; background: #0f172a; color: #ffffff; padding: 12px; font-size: 0.95rem; outline: none; resize: none; height: 80px; }
+        textarea:focus { border-color: #38bdf8; }
+        button { background: #0284c7; color: #ffffff; border: none; padding: 14px; font-size: 1.1rem; font-weight: bold; border-radius: 12px; cursor: pointer; transition: 0.2s; width: 100%; }
+        button:active { background: #0369a1; transform: scale(0.98); }
+        .output-box { flex: 1; background: #0f172a; border-radius: 12px; padding: 12px; overflow-y: auto; white-space: pre-wrap; font-size: 0.95rem; color: #e2e8f0; border: 1px solid #334155; line-height: 1.4; }
     </style>
 </head>
 <body>
 <div class="container">
+    <h2>MSK AI Поиск</h2>
+    <p>Задайте любой вопрос или опишите бизнес-задачу</p>
     
-    <!-- ГЛАВНЫЙ ЭКРАН: КАТАЛОГ УСЛУГ -->
-    <div id="catalog_block" class="menu-grid">
-        <h2>MSK AI: Маркет Услуг</h2>
-        <p>Выберите нужного ИИ-специалиста. Купите ключ активации на Озоне и введите его для разблокировки:</p>
-        
-        <!-- УСЛУГА 1 -->
-        <div class="service-card">
-            <div class="service-title">🧑‍⚖️ ИИ-Юрист Эксперт</div>
-            <div class="service-price">Доступ на Озоне: 500 руб/мес</div>
-            <input type="text" id="key_law" placeholder="Введите ключ для Юриста">
-            <button class="btn" onclick="activateService('law', 'key_law', 'MSK-LAW-2026', 'Ты — топ-юрист РФ. Отвечай строго профессиональным юридическим языком со ссылками на законы РФ.')">Разблокировать Юриста</button>
-        </div>
-
-        <!-- УСЛУГА 2 -->
-        <div class="service-card">
-            <div class="service-title">🛍️ Менеджер Wildberries (SEO)</div>
-            <div class="service-price">Доступ на Озоне: 300 руб/мес</div>
-            <input type="text" id="key_wb" placeholder="Введите ключ для WB">
-            <button class="btn" onclick="activateService('wb', 'key_wb', 'MSK-WB-2026', 'Ты — эксперт Wildberries. Пиши продающие описания карточек товара с ключевыми словами.')">Разблокировать WB</button>
-        </div>
-    </div>
-
-    <!-- ЭКРАН РАБОТЫ АКТИВИРОВАННОГО АГЕНТА -->
-    <div id="work_block" class="hidden" style="display: flex; flex-direction: column; gap: 12px;">
-        <button class="btn" style="background: #ef4444;" onclick="backToCatalog()">⬅️ Вернуться в каталог</button>
-        <h2 id="active_title">Сеть Москва: Активна</h2>
-        <textarea id="task_input" placeholder="Введите ваш вопрос или описание задачи..." style="height: 100px; resize: none;"></textarea>
-        <button class="btn" onclick="sendToNetwork()">Обработать данные</button>
-        <div id="result_output" class="output-box">Ожидание входящей задачи...</div>
-    </div>
+    <textarea id="task_input" placeholder="Например: напиши текст для продажи авто или карточку товара..."></textarea>
+    <button onclick="sendToNetwork()">Найти решение</button>
+    
+    <div id="result_output" class="output-box">Поисковая ИИ-сеть готова к работе...</div>
 </div>
 
 <script>
-let currentPrompt = "";
-let activeName = "";
-
-function activateService(serviceId, inputId, correctKey, promptText) {
-    const userKey = document.getElementById(inputId).value.trim();
-    if (userKey === correctKey) {
-        currentPrompt = promptText;
-        activeName = serviceId === 'law' ? "🧑‍⚖️ ИИ-Юрист активен" : "🛍️ Менеджер WB активен";
-        document.getElementById('active_title').innerText = activeName;
-        document.getElementById('catalog_block').classList.add('hidden');
-        document.getElementById('work_block').classList.remove('hidden');
-    } else {
-        alert("Ошибка: Неверный ключ активации для данной услуги!");
-    }
-}
-
-function backToCatalog() {
-    document.getElementById('work_block').classList.add('hidden');
-    document.getElementById('catalog_block').classList.remove('hidden');
-    document.getElementById('result_output').innerText = "Ожидание входящей задачи...";
-    document.getElementById('task_input').value = "";
-}
-
 async function sendToNetwork() {
     const inputData = document.getElementById('task_input').value.trim();
     const outputBox = document.getElementById('result_output');
-    if (!inputData) return alert("Введите текст");
     
-    outputBox.innerText = "Скрытое вычисление через Москву...";
+    if (!inputData) {
+        alert("Пожалуйста, введите ваш запрос.");
+        return;
+    }
+    
+    outputBox.innerText = "Поиск ответа в закрытой сети... Пожалуйста, подождите...";
+    
     try {
+        // Прямой надежный GET-запрос к ядру без лишних промптов и блокировок
         const secureGateway = "https://pollinations.ai";
-        const finalUrl = secureGateway + encodeURIComponent(inputData + " (Отвечай строго на русском языке) " + currentPrompt);
+        const finalUrl = secureGateway + encodeURIComponent(inputData + " (Отвечай развернуто, профессионально, строго на русском языке, без лишних приветствий)");
+        
         const response = await fetch(finalUrl);
         if (!response.ok) throw new Error();
-        outputBox.innerText = await response.text();
+        
+        const textResult = await response.text();
+        outputBox.innerText = textResult;
     } catch (e) {
-        outputBox.innerText = "Ошибка соединения. Проверьте интернет.";
+        outputBox.innerText = "Ошибка соединения со шлюзом. Проверьте интернет на устройстве.";
     }
 }
 </script>
