@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSK AI Network</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: #212529;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 500px;
+            padding: 24px;
+        }
+
+        h2 {
+            margin-bottom: 8px;
+            font-size: 22px;
+            color: #1a1f36;
+            text-align: center;
+        }
+
+        p.subtitle {
+            color: #697386;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #4f566b;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d9dce1;
+            border-radius: 6px;
+            font-size: 15px;
+            background-color: #fff;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: #5469d4;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #5469d4;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #2840c3;
+        }
+
+        button:disabled {
+            background-color: #a3acb9;
+            cursor: not-allowed;
+        }
+
+        .response-box {
+            margin-top: 20px;
+            padding: 16px;
+            background-color: #f8f9fa;
+            border-left: 4px solid #5469d4;
+            border-radius: 4px;
+            min-height: 60px;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .error-message {
+            color: #c12323;
+            font-size: 14px;
+            margin-top: 8px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- ЭКРАН АВТОРИЗАЦИИ -->
+        <div id="authScreen">
+            <h2>Активация доступа</h2>
+            <p class="subtitle">Введите ваш лицензионный ключ MSK AI Network</p>
+            
+            <div class="form-group">
+                <label for="licenseKey">Лицензионный ключ</label>
+                <input type="text" id="licenseKey" placeholder="Формат: MSK-PRO-XXXX">
+                <div id="authError" class="error-message hidden">Неверный или истекший ключ доступа.</div>
+            </div>
+            
+            <button id="btnActivate">Активировать</button>
+        </div>
+
+        <!-- РАБОЧИЙ ЭКРАН ИИ -->
+        <div id="chatScreen" class="hidden">
+            <h2>MSK AI Network</h2>
+            <p class="subtitle">Прямой доступ к модели Gemini без VPN</p>
+            
+            <div class="form-group">
+                <label for="promptInput">Ваш запрос к ИИ</label>
+                <textarea id="promptInput" placeholder="Напишите, что вас интересует..."></textarea>
+            </div>
+            
+            <button id="btnSend">Отправить запрос</button>
+            
+            <div id="chatError" class="error-message hidden"></div>
+            <div id="responseOutput" class="response-box">Ответ искусственного интеллекта появится здесь...</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const MASTER_KEY = 'MSK-PRO-2026';
+            const API_ENDPOINT = 'https://pollinations.ai';
+
+            const authScreen = document.getElementById('authScreen');
+            const chatScreen = document.getElementById('chatScreen');
+            const licenseInput = document.getElementById('licenseKey');
+            const btnActivate = document.getElementById('btnActivate');
+            const authError = document.getElementById('authError');
+
+            const promptInput = document.getElementById('promptInput');
+            const btnSend = document.getElementById('btnSend');
+            const responseOutput = document.getElementById('responseOutput');
+            const chatError = document.getElementById('chatError');
+
+            const savedKey = localStorage.getItem('msk_session_key');
+            if (savedKey === MASTER_KEY) {
+                showChat();
+            }
+
+            btnActivate.addEventListener('click', () => {
+                const enteredKey = licenseInput.value.trim();
+                
+                if (enteredKey === MASTER_KEY) {
+                    localStorage.setItem('msk_session_key', enteredKey);
+                    authError.classList.add('hidden');
+                    showChat();
+                } else {
+                    authError.classList.remove('hidden');
+                }
+            });
+
+            btnSend.addEventListener('click', async () => {
+                const prompt = promptInput.value.trim();
+                if (!prompt) return;
+
+                btnSend.disabled = true;
+                chatError.classList.add('hidden');
+                responseOutput.textContent = 'Установка соединения со шлюзом... Ожидание ответа ИИ...';
+
+                try {
+                    const response = await fetch(API_ENDPOINT, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            messages: [{ role: 'user', content: prompt }]
+                        })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`Ошибка шлюза. Код: ${response.status}`);
+                    }
+
+                    const data = await response.text();
+                    responseOutput.textContent = data;
+
+                } catch (error) {
+                    chatError.textContent = `Не удалось получить ответ: ${error.message}`;
+                    chatError.classList.remove('hidden');
+                    responseOutput.textContent = 'Ошибка выполнения операции.';
+                } finally {
+                    btnSend.disabled = false;
+                }
+            });
+
+            function showChat() {
+                authScreen.classList.add('hidden');
+                chatScreen.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
