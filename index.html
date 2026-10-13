@@ -15,7 +15,7 @@
         .agent-btn { background: #1f2937; border: 1px solid #374151; color: #9ca3af; padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.3s; }
         .agent-btn.active { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; border-color: #818cf8; box-shadow: 0 0 12px rgba(124,58,237,0.4); }
         
-        /* Динамические стили для режима поиска Google */
+        /* Стили для режима поиска Google */
         body.google-mode { background-color: #131314; }
         body.google-mode header { background: #1e1f20; border-bottom: 2px solid #3c4043; }
         body.google-mode header h1 { color: #fff; text-shadow: none; }
@@ -66,9 +66,9 @@
         <div class="limit-badge" id="limitBadge">Лимит: 3/3</div>
     </header>
     <div class="agent-selector">
-        <button class="agent-btn active" onclick="setAgent('lawyer', event)">⚖️ Юрист</button>
-        <button class="agent-btn" onclick="setAgent('search', event)">🔍 Поиск</button>
-        <button class="agent-btn" onclick="setAgent('wb', event)">📦 Модуль WB</button>
+        <button class="agent-btn active" onclick="setAgent('lawyer')">⚖️ Юрист</button>
+        <button class="agent-btn" onclick="setAgent('search')">🔍 Поиск</button>
+        <button class="agent-btn" onclick="setAgent('wb')">📦 Модуль WB</button>
     </div>
     <div class="chat-container" id="chatBox">
         <div class="message system" id="systemMsg">Система готова. Вам доступно 3 бесплатных премиум-запроса.</div>
@@ -91,11 +91,23 @@
     <script>
         let currentAgent = 'lawyer';
         let freeRequestsLeft = 3;
+        const prompts = {
+            lawyer: "Ты — Высший Цифровой Юрист РФ компании MSK AI Network. Отвечай строго по законам РФ со ссылками на кодексы.",
+            search: "Ты — Умный ИИ-Поисковик сети MSK AI Network. Давай точную выжимку фактов.",
+            wb: "Ты — Аналитик Wildberries команды MSK AI Network. Делай SEO-оптимизацию карточек и поднимай продажи."
+        };
         
-        function setAgent(agent, event) {
+        function setAgent(agent) {
             currentAgent = agent;
+            
+            // Сбрасываем старый активный класс у всех кнопок
             document.querySelectorAll('.agent-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            
+            // Находим нужную кнопку по тексту и делаем её активной
+            const buttons = document.querySelectorAll('.agent-btn');
+            if(agent === 'lawyer') buttons[0].classList.add('active');
+            if(agent === 'search') buttons[1].classList.add('active');
+            if(agent === 'wb') buttons[2].classList.add('active');
             
             const inputEl = document.getElementById('userInput');
             
@@ -117,7 +129,7 @@
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
             recognition.lang = 'ru-RU';
-            recognition.onresult = (e) => document.getElementById('userInput').value = e.results[0][0].transcript;
+            recognition.onresult = (e) => document.getElementById('userInput').value = e.results.transcript;
             recognition.onend = () => { isRecording = false; document.getElementById('micBtn').classList.remove('recording'); };
         }
         function toggleVoiceInput() {
@@ -136,18 +148,3 @@
             
             let chatBox = document.getElementById('chatBox');
             let userMsg = document.createElement('div');
-            userMsg.className = 'message user';
-            userMsg.innerText = text;
-            chatBox.appendChild(userMsg);
-            
-            freeRequestsLeft--;
-            document.getElementById('limitBadge').innerText = `Лимит: ${freeRequestsLeft}/3`;
-            
-            let aiMsg = document.createElement('div');
-            aiMsg.className = 'message ai';
-            aiMsg.innerText = 'Обработка запроса...';
-            chatBox.appendChild(aiMsg);
-            chatBox.scrollTop = chatBox.scrollHeight;
-            
-            if (currentAgent === 'search') {
-                // Магия Google ИИ: открываем официальный умный поиск в новом окне с параметром ИИ-генерации
