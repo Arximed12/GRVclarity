@@ -24,7 +24,7 @@ export default async function handler(req, res) {
         }
 
         // Отправляем официальный, замаскированный запрос напрямую в самую быструю нейросеть Groq
-        const response = await fetch("https://groq.com", {
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${apiKey}`,
