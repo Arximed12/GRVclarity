@@ -16,7 +16,7 @@
         .chat-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: radial-gradient(circle at top, #111827 0%, #060911 100%); }
         .message { max-width: 85%; padding: 12px 16px; border-radius: 16px; line-height: 1.5; font-size: 15px; word-wrap: break-word; }
         .message.user { background: #312e81; color: #e0e7ff; align-self: flex-end; border-bottom-right-radius: 4px; border: 1px solid #4338ca; }
-        .message.ai { background: #1f2937; color: #f3f4f6; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #374151; }
+        .message.ai { background: #1f2937; color: #f3f4f6; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #374151; white-space: pre-wrap; }
         .message.system { background: transparent; color: #4b5563; font-size: 12px; align-self: center; text-align: center; }
         .input-area { background-color: #111827; padding: 15px; display: flex; gap: 10px; align-items: center; border-top: 1px solid #1f2937; }
         .input-wrapper { flex: 1; background: #1f2937; border: 1px solid #374151; border-radius: 25px; display: flex; align-items: center; padding: 5px 15px; }
@@ -36,9 +36,9 @@
         <div class="limit-badge" id="limitBadge">Лимит: 3/3</div>
     </header>
     <div class="agent-selector">
-        <button class="agent-btn active" onclick="setAgent('lawyer')">⚖️ Юрист</button>
-        <button class="agent-btn" onclick="setAgent('search')">🔍 Поиск</button>
-        <button class="agent-btn" onclick="setAgent('wb')">📦 Модуль WB</button>
+        <button class="agent-btn active" onclick="setAgent('lawyer', event)">⚖️ Юрист</button>
+        <button class="agent-btn" onclick="setAgent('search', event)">🔍 Поиск</button>
+        <button class="agent-btn" onclick="setAgent('wb', event)">📦 Модуль WB</button>
     </div>
     <div class="chat-container" id="chatBox">
         <div class="message system">Система готова. Вам доступно 3 бесплатных премиум-запроса.</div>
@@ -66,44 +66,54 @@
             search: "Ты — Умный ИИ-Поисковик сети MSK AI Network. Давай точную выжимку фактов.",
             wb: "Ты — Аналитик Wildberries команды MSK AI Network. Делай SEO-оптимизацию карточек и поднимай продажи."
         };
-        function setAgent(agent) {
+        
+        function setAgent(agent, event) {
             currentAgent = agent;
             document.querySelectorAll('.agent-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
             chatHistory = []; 
         }
+        
         async function sendMessage() {
             if (freeRequestsLeft <= 0) { document.getElementById('paywall').style.display = 'flex'; return; }
             let inputEl = document.getElementById('userInput');
             let text = inputEl.value.trim();
             if (!text) return;
             inputEl.value = '';
+            
             let chatBox = document.getElementById('chatBox');
             let userMsg = document.createElement('div');
             userMsg.className = 'message user';
             userMsg.innerText = text;
             chatBox.appendChild(userMsg);
+            
             freeRequestsLeft--;
             document.getElementById('limitBadge').innerText = `Лимит: ${freeRequestsLeft}/3`;
+            
             let aiMsg = document.createElement('div');
             aiMsg.className = 'message ai';
             aiMsg.innerText = 'ИИ думает...';
             chatBox.appendChild(aiMsg);
             chatBox.scrollTop = chatBox.scrollHeight;
+            
             chatHistory.push({ role: "user", content: text });
+            
             try {
-                let response = await fetch('https://pollinations.ai', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        messages: [{ role: "system", content: prompts[currentAgent] }, ...chatHistory],
-                        private: true
-                    })
-                });
+                // Новая рабочая схема: отправляем системный промпт и контекст через открытый шлюз
+                const systemContext = prompts[currentAgent];
+                const fullQuery = `Контекст роли: ${systemContext}\n\nИстория диалога: ${JSON.stringify(chatHistory)}\n\nНовый вопрос пользователя: ${text}`;
+                
+                let response = await fetch(`https://pollinations.ai{encodeURIComponent(fullQuery)}`);
+                
+                if (!response.ok) throw new Error('Ошибка шлюза');
+                
                 let aiText = await response.text();
                 aiMsg.innerText = aiText;
                 chatHistory.push({ role: "assistant", content: aiText });
-            } catch (e) { aiMsg.innerText = 'Ошибка сети. Проверьте интернет.'; }
+            } catch (e) { 
+                aiMsg.innerText = 'Ошибка сети. Шлюз перегружен, попробуйте еще раз.'; 
+                console.error(e);
+            }
             chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
