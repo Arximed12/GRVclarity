@@ -3,33 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSK AI Network - Premium</title>
+    <title>MSK AI Network - Premium Edge</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
         body { background-color: #0b0f19; color: #f3f4f6; display: flex; flex-direction: column; height: 100vh; overflow: hidden; transition: background 0.3s; }
-        header { background: linear-gradient(135deg, #1e1b4b, #311042); padding: 15px; text-align: center; border-bottom: 2px solid #4338ca; position: relative; }
+        
+        /* Шапка сайта */
+        header { background: linear-gradient(135deg, #1e1b4b, #311042); padding: 15px; text-align: center; border-bottom: 2px solid #4338ca; position: relative; transition: all 0.3s; }
         header h1 { font-size: 18px; font-weight: bold; color: #818cf8; text-shadow: 0 0 10px rgba(99,102,241,0.5); }
         .limit-badge { position: absolute; right: 15px; top: 15px; background: #1f2937; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; color: #f43f5e; border: 1px solid #f43f5e; }
+        
+        /* Переключатель Агентов */
         .agent-selector { display: flex; justify-content: space-around; background-color: #111827; padding: 10px; border-bottom: 1px solid #1f2937; }
-        .agent-btn { background: #1f2937; border: 1px solid #374151; color: #9ca3af; padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.3s; }
+        .agent-btn { background: #1f2937; border: 1px solid #374151; color: #9ca3af; padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.3s; outline: none; }
         .agent-btn.active { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; border-color: #818cf8; box-shadow: 0 0 12px rgba(124,58,237,0.4); }
         
-        /* Изменения стиля для режима ИИ Google */
+        /* Стили для фирменного Режима Google ИИ */
         body.google-mode { background-color: #131314; }
         body.google-mode header { background: #1e1f20; border-bottom: 2px solid #3c4043; }
         body.google-mode header h1 { color: #fff; text-shadow: none; }
         body.google-mode .agent-btn.active { background: #1a73e8; border-color: #8ab4f8; box-shadow: 0 0 12px rgba(26,115,232,0.4); }
 
+        /* Окно сообщений */
         .chat-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: radial-gradient(circle at top, #111827 0%, #060911 100%); }
         body.google-mode .chat-container { background: #131314; }
 
         .message { max-width: 85%; padding: 12px 16px; border-radius: 16px; line-height: 1.5; font-size: 15px; word-wrap: break-word; }
-        .message.user { background: #312e81; color: #e0e7ff; align-self: flex-end; border-bottom-right-radius: 4px; border: 1px solid #4338ca; }
+        .message.user { align-self: flex-end; background: #312e81; color: #e0e7ff; border-bottom-right-radius: 4px; border: 1px solid #4338ca; }
         body.google-mode .message.user { background: #2b2a33; border-color: #3c4043; color: #fff; }
-        .message.ai { background: #1f2937; color: #f3f4f6; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #374151; white-space: pre-wrap; }
+        
+        .message.ai { align-self: flex-start; background: #1f2937; color: #f3f4f6; border-bottom-left-radius: 4px; border: 1px solid #374151; white-space: pre-wrap; }
         body.google-mode .message.ai { background: #1e1f20; border-color: #3c4043; }
         .message.system { background: transparent; color: #4b5563; font-size: 12px; align-self: center; text-align: center; }
         
+        /* Блок авторизации Google */
+        .google-auth-box { display: none; background: #1e1f20; border: 1px solid #3c4043; border-radius: 16px; padding: 20px; text-align: center; margin: 10px auto; max-width: 400px; }
+        .google-auth-btn { background: white; color: #3c4043; border: 1px solid #747775; padding: 10px 16px; border-radius: 4px; font-weight: 500; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; margin-top: 10px; }
+
+        /* Поле ввода текста */
         .input-area { background-color: #111827; padding: 15px; display: flex; gap: 10px; align-items: center; border-top: 1px solid #1f2937; }
         body.google-mode .input-area { background-color: #131314; border-top: 1px solid #3c4043; }
         
@@ -38,12 +49,13 @@
         
         input { flex: 1; background: transparent; border: none; color: #f3f4f6; height: 35px; font-size: 15px; outline: none; }
         
-        .mic-btn { background: none; border: none; color: #80868b; cursor: pointer; font-size: 18px; padding: 4px; display: flex; align-items: center; justify-content: center; }
+        .mic-btn { background: none; border: none; color: #80868b; cursor: pointer; font-size: 18px; padding: 4px; display: flex; align-items: center; justify-content: center; outline: none; }
         .mic-btn.recording { color: #f43f5e; animation: pulse 1.5s infinite; }
         
-        .send-btn { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .send-btn { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; outline: none; }
         body.google-mode .send-btn { background: #1a73e8; }
         
+        /* Окно лимита / оплаты */
         .paywall-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(6, 9, 17, 0.95); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; z-index: 9999; }
         .paywall-card { background: #111827; border: 2px solid #6366f1; border-radius: 24px; padding: 40px 25px; max-width: 400px; box-shadow: 0 0 30px rgba(99,102,241,0.3); }
         .paywall-title { font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 10px; }
@@ -63,14 +75,26 @@
         <h1 id="headerTitle">MSK AI NETWORK</h1>
         <div class="limit-badge" id="limitBadge">Лимит: 3/3</div>
     </header>
+    
     <div class="agent-selector">
-        <button class="agent-btn active" onclick="setAgent('lawyer')">⚖️ Юрист</button>
-        <button class="agent-btn" onclick="setAgent('search')">🔍 Поиск</button>
-        <button class="agent-btn" onclick="setAgent('wb')">📦 Модуль WB</button>
+        <button id="btn-lawyer" class="agent-btn active" onclick="setAgent('lawyer')">⚖️ Юрист</button>
+        <button id="btn-search" class="agent-btn" onclick="setAgent('search')">🔍 Поиск</button>
+        <button id="btn-wb" class="agent-btn" onclick="setAgent('wb')">💰 ИИ-Продавец</button>
     </div>
+    
     <div class="chat-container" id="chatBox">
-        <div class="message system">Система готова. Вам доступно 3 бесплатных премиум-запроса.</div>
+        <div class="message system" id="infoMessage">Система готова. Вам доступно 3 бесплатных премиум-запроса.</div>
+        
+        <!-- Заготовка под будущую кнопку авторизации Google -->
+        <div class="google-auth-box" id="googleAuthBlock">
+            <p style="font-size: 14px; color: #9ca3af;">Для использования Режима ИИ от Google необходимо подтвердить аккаунт:</p>
+            <button class="google-auth-btn" onclick="alert('На следующем шаге мы подключим сюда ваш Google Client ID!')">
+                <img src="https://gstatic.com" alt="G" width="18">
+                Войти через Google
+            </button>
+        </div>
     </div>
+    
     <div class="input-area">
         <div class="input-wrapper">
             <button class="mic-btn" id="micBtn" onclick="toggleVoiceInput()" title="Голосовой ввод">🎤</button>
@@ -78,73 +102,43 @@
         </div>
         <button class="send-btn" onclick="sendMessage()">➔</button>
     </div>
+    
     <div class="paywall-overlay" id="paywall">
         <div class="paywall-card">
             <div class="paywall-title">👑 Лимит исчерпан</div>
-            <div class="paywall-text">Вы использовали все бесплатные запросы. Оформите Premium-доступ, чтобы открыть безлимитный доступ к Высшему ИИ-Юристу, Поиску и бизнес-аналитике Wildberries.</div>
+            <div class="paywall-text">Вы использовали все бесплатные запросы. Оформите Premium-доступ, чтобы открыть безлимитный доступ к Высшему ИИ-Юристу, Поиску и ИИ-Продавцу (Авито, Ozon, WB).</div>
             <div class="price">1 990 ₽ / месяц</div>
             <button class="pay-btn" onclick="alert('В следующем шаге мы настроим реальный приём платежей сюда!')">Активировать доступ</button>
         </div>
     </div>
+
     <script>
         let currentAgent = 'lawyer';
         let freeRequestsLeft = 3;
-        let chatHistory = [];
         const prompts = {
-            lawyer: "Ты — Высший Цифровой Юрист РФ компании MSK AI Network. Отвечай строго по законам РФ со ссылками на кодексы.",
-            search: "Ты — Умный ИИ-Поисковик сети MSK AI Network. Давай точную выжимку фактов.",
-            wb: "Ты — Аналитик Wildberries команды MSK AI Network. Делай SEO-оптимизацию карточек и поднимай продажи."
+            lawyer: "Ты — Высший Цифровой Юрист РФ компании MSK AI Network. Отвечай строго по законам РФ со ссылками на кодексы и статьи.",
+            search: "Ты — Умный ИИ-Поисковик сети MSK AI Network. Выдавай точные факты.",
+            wb: "Ты — Профессиональный ИИ-Копирайтер для торговли в РФ. Генерируй продающие тексты и SEO-описания для Авито, Ozon, Wildberries и Яндекс Маркета."
         };
         
-        // Ваша родная функция переключения, полностью исправленная
         function setAgent(agent) {
             currentAgent = agent;
             
-            // Убираем активный класс у всех кнопок
-            document.querySelectorAll('.agent-btn').forEach(btn => btn.classList.remove('active'));
+            // Сброс и установка активной кнопки
+            document.getElementById('btn-lawyer').classList.remove('active');
+            document.getElementById('btn-search').classList.remove('active');
+            document.getElementById('btn-wb').classList.remove('active');
+            document.getElementById('btn-' + agent).classList.add('active');
             
-            // Делаем активной именно ту кнопку, на которую нажали
-            event.target.classList.add('active');
-            
-            chatHistory = []; 
             const inputEl = document.getElementById('userInput');
+            const authBlock = document.getElementById('googleAuthBlock');
             
-            // Переключаем визуальный вид для режима Google поисковика
             if (agent === 'search') {
                 document.body.classList.add('google-mode');
                 document.getElementById('headerTitle').innerText = 'Google Режим ИИ';
                 inputEl.placeholder = 'Спросите Google (Режим ИИ)...';
+                authBlock.style.display = 'block'; // Показываем блок авторизации
             } else {
                 document.body.classList.remove('google-mode');
                 document.getElementById('headerTitle').innerText = 'MSK AI NETWORK';
                 inputEl.placeholder = 'Задайте вопрос ИИ...';
-            }
-        }
-
-        // --- ЛОГИКА МИКРОФОНА ---
-        let recognition;
-        let isRecording = false;
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.lang = 'ru-RU';
-            recognition.onresult = (e) => { document.getElementById('userInput').value = e.results.transcript; };
-            recognition.onend = () => { isRecording = false; document.getElementById('micBtn').classList.remove('recording'); };
-        }
-        function toggleVoiceInput() {
-            if (!recognition) return alert("Голосовой ввод не поддерживается в этом браузере.");
-            if (isRecording) { recognition.stop(); } 
-            else { isRecording = true; document.getElementById('micBtn').classList.add('recording'); recognition.start(); }
-        }
-        
-        // --- ЛОГИКА ОТПРАВКИ ---
-        async function sendMessage() {
-            if (freeRequestsLeft <= 0) { document.getElementById('paywall').style.display = 'flex'; return; }
-            let inputEl = document.getElementById('userInput');
-            let text = inputEl.value.trim();
-            if (!text) return;
-            inputEl.value = '';
-            
-            let chatBox = document.getElementById('chatBox');
-            let userMsg = document.createElement('div');
-            userMsg.className = 'message user';
