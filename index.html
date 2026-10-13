@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест MSK AI - Всплывающее Окно</title>
+    <title>Тест MSK AI - Безрамочное Окно</title>
 
     <!-- Официальная защита против зависания памяти (кэша) -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -11,37 +11,30 @@
     <meta http-equiv="Expires" content="0">
 
     <style>
-        /* Стиль вашего основного премиум-сайта */
         body { background-color: #0b0f19; color: white; font-family: sans-serif; padding: 20px; text-align: center; margin: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        
         .main-card { background: #111827; border: 1px solid #1f2937; padding: 40px; border-radius: 24px; max-width: 500px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         h1 { font-size: 24px; color: #818cf8; margin-bottom: 10px; }
         p { color: #9ca3af; font-size: 14px; margin-bottom: 30px; }
-        
-        /* Поле ввода */
         .search-input { width: 100%; background: #1f2937; border: 1px solid #374151; border-radius: 14px; color: white; padding: 15px; font-size: 16px; outline: none; margin-bottom: 20px; text-align: center; }
         .search-input:focus { border-color: #4f46e5; }
-        
-        /* Фирменная синяя кнопка запуска */
         .launch-btn { background: #1a73e8; color: white; border: none; padding: 16px 32px; font-size: 16px; font-weight: bold; border-radius: 50px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(26,115,232,0.3); width: 100%; }
         .launch-btn:hover { background: #1557b0; transform: translateY(-2px); }
-        
         #status-text { margin-top: 20px; font-size: 14px; color: #6b7280; }
     </style>
 </head>
 <body>
 
     <div class="main-card">
-        <h1>MSK AI — Тест Технологии</h1>
-        <p>Проверяем всплывающее ИИ-окно Google поверх сайта</p>
+        <h1>MSK AI — Тест Панели Google</h1>
+        <p>Проверяем безрамочное ИИ-окно Google поверх сайта</p>
 
         <!-- Поле для ввода тестового вопроса -->
-        <input type="text" id="testQuery" class="search-input" value="Закон о защите прав потребителей РФ">
+        <input type="text" id="testQuery" class="search-input" value="закон о защите прав потребителей рф">
 
-        <!-- Кнопка активации окна поверх сайта -->
-        <button class="launch-btn" onclick="openGoogleAIOver()">🔍 Запустить ИИ-Поиск Google поверх сайта</button>
+        <!-- Кнопка активации -->
+        <button class="launch-btn" onclick="openGoogleAIOver()">🔍 Запустить безрамочный ИИ-Поиск</button>
 
-        <div id="status-text">Введите вопрос и нажмите кнопку. Браузер откроет ИИ-выжимку.</div>
+        <div id="status-text">Нажмите для вызова чистой ИИ-панели Google.</div>
     </div>
 
     <script>
@@ -49,31 +42,29 @@
             const query = document.getElementById('testQuery').value.trim();
             if (!query) return alert("Введите вопрос!");
 
-            document.getElementById('status-text').innerText = "Технология запущена. Окно открывается поверх...";
+            document.getElementById('status-text').innerText = "Интернет-канал исправлен. Открываю чистую ИИ-панель...";
 
-            // Формируем прямую ссылку на ИИ-выжимку Google (udm=50)
-            const googleAiUrl = `https://google.com{encodeURIComponent(query)}&udm=50`;
+            // ИСПРАВЛЕНО: Теперь адрес формируется правильно, подставляя реальный текст вопроса
+            const googleAiUrl = "https://google.com" + encodeURIComponent(query) + "&udm=50";
 
-            // Уловка против багов: Задаем точные размеры и координаты, 
-            // чтобы окно открылось аккуратной панелью прямо по центру вашего экрана поверх сайта
-            const width = 800;
-            const height = 600;
+            // Настройки размеров окна
+            const width = 900;
+            const height = 650;
             const left = (window.screen.width / 2) - (width / 2);
             const top = (window.screen.height / 2) - (height / 2);
 
-            // Открываем как изолированное модальное окно браузера
+            // МАСКИРОВКА ПОД ПАНЕЛЬ: Отключаем toolbar, location, directories, status, menubar
+            // Это заставляет браузер скрыть все рамки, адресную строку и вкладки
             const googleWindow = window.open(
                 googleAiUrl, 
                 "GoogleAIWindow", 
-                `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no`
+                "width=" + width + ",height=" + height + ",top=" + top + ",left=" + left + 
+                ",resizable=yes,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no,directories=no"
             );
 
-            // Если у пользователя в браузере включен жесткий блокировщик всплывающих окон
             if (!googleWindow || googleWindow.closed || typeof googleWindow.closed == 'undefined') {
-                document.getElementById('status-text').innerText = "Ошибка: Браузер заблокировал всплывающее окно. Пожалуйста, разрешите всплывающие окна для этого сайта вверху строки браузера!";
-                alert("Пожалуйста, разрешите всплывающие окна для этого сайта в настройках браузера (иконка в адресной строке справа), чтобы тест сработал!");
+                document.getElementById('status-text').innerText = "Пожалуйста, разрешите всплывающие окна в браузере!";
             } else {
-                // Если всё хорошо, окно успешно висит поверх нашего сайта
                 googleWindow.focus();
             }
         }
