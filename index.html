@@ -3,33 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест MSK AI</title>
+    <title>Тест MSK AI - Всплывающее Окно</title>
+
+    <!-- Официальная защита против зависания памяти (кэша) -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+
     <style>
-        body { background-color: #0b0f19; color: white; font-family: sans-serif; padding: 20px; text-align: center; }
-        .btn { background: #4f46e5; color: white; border: none; padding: 15px 30px; border-radius: 10px; cursor: pointer; font-size: 16px; margin: 10px; }
-        .btn:hover { background: #7c3aed; }
-        #status { margin-top: 20px; font-size: 18px; color: #818cf8; }
+        /* Стиль вашего основного премиум-сайта */
+        body { background-color: #0b0f19; color: white; font-family: sans-serif; padding: 20px; text-align: center; margin: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        
+        .main-card { background: #111827; border: 1px solid #1f2937; padding: 40px; border-radius: 24px; max-width: 500px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h1 { font-size: 24px; color: #818cf8; margin-bottom: 10px; }
+        p { color: #9ca3af; font-size: 14px; margin-bottom: 30px; }
+        
+        /* Поле ввода */
+        .search-input { width: 100%; background: #1f2937; border: 1px solid #374151; border-radius: 14px; color: white; padding: 15px; font-size: 16px; outline: none; margin-bottom: 20px; text-align: center; }
+        .search-input:focus { border-color: #4f46e5; }
+        
+        /* Фирменная синяя кнопка запуска */
+        .launch-btn { background: #1a73e8; color: white; border: none; padding: 16px 32px; font-size: 16px; font-weight: bold; border-radius: 50px; cursor: pointer; transition: all 0.3s; box-shadow: 0 4px 15px rgba(26,115,232,0.3); width: 100%; }
+        .launch-btn:hover { background: #1557b0; transform: translateY(-2px); }
+        
+        #status-text { margin-top: 20px; font-size: 14px; color: #6b7280; }
     </style>
 </head>
 <body>
 
-    <h1>Тестовый режим MSK AI</h1>
-    <p>Проверяем работу кнопок на GitHub Pages</p>
+    <div class="main-card">
+        <h1>MSK AI — Тест Технологии</h1>
+        <p>Проверяем всплывающее ИИ-окно Google поверх сайта</p>
 
-    <!-- Две простые кнопки для проверки -->
-    <button class="btn" onclick="testClick('Кнопка Юрист работает!')">⚖️ Проверить Юриста</button>
-    <button class="btn" onclick="testClick('Кнопка Поиск открывает Google...')">🔍 Проверить Поиск</button>
+        <!-- Поле для ввода тестового вопроса -->
+        <input type="text" id="testQuery" class="search-input" value="Закон о защите прав потребителей РФ">
 
-    <div id="status">Нажмите на любую кнопку...</div>
+        <!-- Кнопка активации окна поверх сайта -->
+        <button class="launch-btn" onclick="openGoogleAIOver()">🔍 Запустить ИИ-Поиск Google поверх сайта</button>
+
+        <div id="status-text">Введите вопрос и нажмите кнопку. Браузер откроет ИИ-выжимку.</div>
+    </div>
 
     <script>
-        function testClick(message) {
-            // Меняем текст на экране при клике
-            document.getElementById('status').innerText = message;
-            
-            // Если нажали поиск, сразу пробуем открыть Google
-            if (message.includes('Поиск')) {
-                window.open('https://google.com', '_blank');
+        function openGoogleAIOver() {
+            const query = document.getElementById('testQuery').value.trim();
+            if (!query) return alert("Введите вопрос!");
+
+            document.getElementById('status-text').innerText = "Технология запущена. Окно открывается поверх...";
+
+            // Формируем прямую ссылку на ИИ-выжимку Google (udm=50)
+            const googleAiUrl = `https://google.com{encodeURIComponent(query)}&udm=50`;
+
+            // Уловка против багов: Задаем точные размеры и координаты, 
+            // чтобы окно открылось аккуратной панелью прямо по центру вашего экрана поверх сайта
+            const width = 800;
+            const height = 600;
+            const left = (window.screen.width / 2) - (width / 2);
+            const top = (window.screen.height / 2) - (height / 2);
+
+            // Открываем как изолированное модальное окно браузера
+            const googleWindow = window.open(
+                googleAiUrl, 
+                "GoogleAIWindow", 
+                `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no`
+            );
+
+            // Если у пользователя в браузере включен жесткий блокировщик всплывающих окон
+            if (!googleWindow || googleWindow.closed || typeof googleWindow.closed == 'undefined') {
+                document.getElementById('status-text').innerText = "Ошибка: Браузер заблокировал всплывающее окно. Пожалуйста, разрешите всплывающие окна для этого сайта вверху строки браузера!";
+                alert("Пожалуйста, разрешите всплывающие окна для этого сайта в настройках браузера (иконка в адресной строке справа), чтобы тест сработал!");
+            } else {
+                // Если всё хорошо, окно успешно висит поверх нашего сайта
+                googleWindow.focus();
             }
         }
     </script>
