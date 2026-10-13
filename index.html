@@ -3,12 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест MSK AI - Безрамочное Окно</title>
+    <title>Тест MSK AI - Чистая Панель</title>
 
-    <!-- Официальная защита против зависания памяти (кэша) -->
+    <!-- Защита от зависания памяти (кэша) -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
+
+    <!-- ЦВЕТОВАЯ МАСКИРОВКА: Перекрашивает элементы браузера под цвет нашего приложения -->
+    <meta name="theme-color" content="#0b0f19">
+    <meta name="msapplication-navbutton-color" content="#0b0f19">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#0b0f19">
 
     <style>
         body { background-color: #0b0f19; color: white; font-family: sans-serif; padding: 20px; text-align: center; margin: 0; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -28,7 +33,7 @@
         <h1>MSK AI — Тест Панели Google</h1>
         <p>Проверяем безрамочное ИИ-окно Google поверх сайта</p>
 
-        <!-- Поле для ввода тестового вопроса -->
+        <!-- Тестовый вопрос -->
         <input type="text" id="testQuery" class="search-input" value="закон о защите прав потребителей рф">
 
         <!-- Кнопка активации -->
@@ -42,21 +47,20 @@
             const query = document.getElementById('testQuery').value.trim();
             if (!query) return alert("Введите вопрос!");
 
-            document.getElementById('status-text').innerText = "Интернет-канал исправлен. Открываю чистую ИИ-панель...";
+            document.getElementById('status-text').innerText = "Канал связи обновлен. Загружаю официальный Google...";
 
-            // ИСПРАВЛЕНО: Теперь адрес формируется правильно, подставляя реальный текст вопроса
-            const googleAiUrl = "https://google.com" + encodeURIComponent(query) + "&udm=50";
+            // Полностью переписано формирование адреса без технических символов
+            const baseGoogleUrl = "https://google.com";
+            const fullUrl = baseGoogleUrl + "?q=" + encodeURIComponent(query) + "&udm=50";
 
-            // Настройки размеров окна
             const width = 900;
             const height = 650;
             const left = (window.screen.width / 2) - (width / 2);
             const top = (window.screen.height / 2) - (height / 2);
 
-            // МАСКИРОВКА ПОД ПАНЕЛЬ: Отключаем toolbar, location, directories, status, menubar
-            // Это заставляет браузер скрыть все рамки, адресную строку и вкладки
+            // Запуск безрамочной панели с отключением лишних элементов
             const googleWindow = window.open(
-                googleAiUrl, 
+                fullUrl, 
                 "GoogleAIWindow", 
                 "width=" + width + ",height=" + height + ",top=" + top + ",left=" + left + 
                 ",resizable=yes,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no,directories=no"
