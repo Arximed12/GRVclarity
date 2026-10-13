@@ -2,137 +2,132 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MSK AI Network Ultimate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSK AI Network</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
-        body { background: #0b0f19; color: #f1f5f9; padding: 15px; display: flex; flex-direction: column; height: 100vh; justify-content: space-between; }
+        :root {
+            --bg-color: #131314;
+            --container-bg: #1e1f20;
+            --text-color: #e3e3e3;
+            --accent-color: #a8c7fa;
+            --input-bg: #2b2a33;
+            --btn-active: #333538;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 16px; display: flex; flex-direction: column; height: 100vh; justify-content: space-between; }
         
-        /* Панель выбора наших Агентов */
-        .agent-bar { width: 100%; max-width: 500px; margin: 0 auto 10px auto; display: flex; gap: 8px; overflow-x: auto; padding-bottom: 5px; }
-        .agent-btn { background: #1e293b; color: #94a3b8; border: 1px solid #334155; padding: 10px 18px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; cursor: pointer; white-space: nowrap; transition: 0.2s; }
-        .agent-btn.active { background: #0284c7; color: #ffffff; border-color: #38bdf8; }
-
-        /* Окно результатов закрытой сети */
-        .output-box { flex: 1; width: 100%; max-width: 500px; margin: 0 auto 10px auto; background: #0b0f19; overflow-y: auto; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.6; color: #e2e8f0; padding: 10px; }
+        /* Шапка и выбор агентов */
+        .header { text-align: center; margin-bottom: 15px; }
+        .header h1 { font-size: 20px; font-weight: 500; color: var(--accent-color); }
+        .agents-tabs { display: flex; gap: 8px; margin-bottom: 15px; justify-content: center; }
+        .agent-btn { background: var(--container-bg); border: 1px solid #444; color: var(--text-color); padding: 10px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: 0.2s; }
+        .agent-btn.active { background: var(--accent-color); color: #000; font-weight: 600; border-color: var(--accent-color); }
         
-        /* Панель управления текстом */
-        .action-bar { width: 100%; max-width: 500px; margin: 0 auto 10px auto; display: flex; gap: 10px; }
-        .action-btn { flex: 1; background: #1e293b; color: #e2e8f0; border: 1px solid #334155; padding: 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        .action-btn:active { background: #334155; }
-
-        /* Наша фирменная поисковая строка */
-        .search-container { width: 100%; max-width: 500px; margin: 0 auto; background: #1e293b; border-radius: 28px; padding: 6px 16px; display: flex; align-items: center; gap: 12px; border: 1px solid #334155; }
-        .search-container:focus-within { border-color: #38bdf8; }
+        /* Экран вывода */
+        .display-area { flex-grow: 1; background: var(--container-bg); border-radius: 16px; padding: 16px; overflow-y: auto; margin-bottom: 15px; font-size: 15px; line-height: 1.5; border: 1px solid #2d2f31; white-space: pre-wrap; }
         
-        .icon-btn { background: none; border: none; color: #94a3b8; cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; transition: 0.2s; font-size: 1.3rem; font-weight: bold; }
-        .icon-btn:active { background: #334155; }
-
-        textarea { flex: 1; background: none; border: none; color: #ffffff; font-size: 1rem; outline: none; padding: 10px 0; resize: none; height: 44px; max-height: 120px; line-height: 1.3; }
-        textarea::placeholder { color: #64748b; }
+        /* Утилиты */
+        .utility-bar { display: flex; gap: 10px; margin-bottom: 15px; justify-content: flex-end; }
+        .util-btn { background: transparent; border: none; color: var(--accent-color); font-size: 13px; cursor: pointer; padding: 5px 10px; border-radius: 4px; }
+        .util-btn:active { background: var(--btn-active); }
+        
+        /* Контейнер ввода */
+        .input-container { display: flex; background: var(--input-bg); border-radius: 28px; padding: 6px 12px; align-items: center; border: 1px solid #52525e; }
+        .input-container input { flex-grow: 1; background: transparent; border: none; color: var(--text-color); font-size: 16px; padding: 10px; outline: none; }
+        .send-btn { background: transparent; border: none; color: var(--accent-color); font-size: 22px; cursor: pointer; padding: 0 10px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- УРОВЕНЬ 1: ЗАРЯДКА АГЕНТОВ -->
-    <div class="agent-bar">
-        <button class="agent-btn" id="btn_search" onclick="setAgent('search', 'Ты — универсальный ИИ-поиск сети MSK AI. Отвечай развернуто, понятно и структурированно по любым вопросам.')">🧠 Общий Поиск</button>
-        <button class="agent-btn active" id="btn_law" onclick="setAgent('law', 'Ты — опытный российский адвокат и эксперт по праву РФ. Твоя задача — давать юридические консультации строго по законам РФ (ГК, ТК, УК, ЖК РФ) и составлять официальные документы (исковые заявления в суд, претензии, жалобы). При запросе на составление иска обязательно пиши В СУД (название), Истец, Ответчик, Цена иска, детальное описание нарушения со ссылками на статьи кодексов РФ и в конце блок ПРОШУ СУД. Действуй как профессиональный практикующий юрист.')">🧑‍⚖️ ИИ-Юрист РФ</button>
-        <button class="agent-btn" id="btn_wb" onclick="setAgent('wb', 'Ты — торговый модуль сети MSK AI. Пиши убойные продающие SEO-описания карточек товара с ключевыми словами под алгоритмы Wildberries и Озон.')">🛍️ Модуль WB</button>
+    <div class="header">
+        <h1>MSK AI Network</h1>
     </div>
 
-    <!-- ОКНО КАНАЛА СВЯЗИ -->
-    <div class="output-box" id="result_output">Соединение с московским узлом сети установлено.<br>Опишите вашу задачу юристу или смените канал выше.</div>
-
-    <!-- ПАНЕЛЬ ДЕЙСТВИЙ (СКОПИРОВАТЬ / ПОДЕЛИТЬСЯ) -->
-    <div class="action-bar">
-        <button class="action-btn" onclick="copyText()">📋 Скопировать ответ</button>
-        <button class="action-btn" onclick="shareText()">🔗 Поделиться</button>
+    <!-- Переключатели ИИ-Агентов -->
+    <div class="agents-tabs">
+        <button class="agent-btn active" onclick="selectAgent('search', this)">Общий поиск</button>
+        <button class="agent-btn" onclick="selectAgent('lawyer', this)">ИИ-Юрист РФ</button>
+        <button class="agent-btn" onclick="selectAgent('wb', this)">Модуль WB</button>
     </div>
 
-    <!-- УРОВЕНЬ 2: ВСЕМОГУЩАЯ СТРОКА ВВОДА -->
-    <div class="search-container">
-        <!-- Кнопка Плюс -->
-        <button class="icon-btn" onclick="triggerFileSelect()">+</button>
-        <input type="file" id="file_picker" style="display:none;" onchange="handleFileSelect(event)">
-        
-        <!-- Поле ввода текста -->
-        <textarea id="task_input" placeholder="Введите задачу для сети..."></textarea>
-        
-        <!-- Безопасный вызов микрофона -->
-        <button class="icon-btn" onclick="focusInput()">🎙️</button>
-        <!-- Стрелочка отправки -->
-        <button class="icon-btn" onclick="sendToNetwork()" style="color: #38bdf8;">➔</button>
+    <!-- Окно ответа -->
+    <div class="display-area" id="output">Готов к работе. Введите запрос...</div>
+
+    <!-- Кнопки управления -->
+    <div class="utility-bar">
+        <button class="util-btn" onclick="copyText()">📋 Скопировать</button>
+        <button class="util-btn" onclick="shareText()">🔗 Поделиться</button>
     </div>
 
-<script>
-let currentPrompt = "Ты — опытный российский адвокат и эксперт по праву РФ. Твоя задача — давать юридические консультации строго по законам РФ (ГК, ТК, УК, ЖК РФ) и составлять официальные документы (исковые заявления в суд, претензии, жалобы). При запросе на составление иска обязательно пиши В СУД (название), Истец, Ответчик, Цена иска, детальное описание нарушения со ссылками на статьи кодексов РФ и в конце блок ПРОШУ СУД. Действуй как профессиональный практикующий юрист.";
+    <!-- Поле отправки -->
+    <div class="input-container">
+        <input type="text" id="userInput" placeholder="Спросите ИИ..." onkeydown="if(event.key === 'Enter') sendToAppInventor()">
+        <button class="send-btn" onclick="sendToAppInventor()">➔</button>
+    </div>
 
-function setAgent(id, promptText) {
-    currentPrompt = promptText;
-    document.querySelectorAll('.agent-btn').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('btn_' + id).classList.add('active');
-    document.getElementById('result_output').innerText = "Канал связи успешно перенастроен. Ожидание вашей задачи.";
-}
+    <script>
+        let currentAgent = "search";
 
-function focusInput() {
-    const input = document.getElementById('task_input');
-    input.focus();
-    document.getElementById('result_output').innerText = "Используйте кнопку микрофона на клавиатуре вашего телефона для набора текста голосом.";
-}
+        function selectAgent(agent, element) {
+            currentAgent = agent;
+            document.querySelectorAll('.agent-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+        }
 
-function triggerFileSelect() { document.getElementById('file_picker').click(); }
-function handleFileSelect(event) {
-    const file = event.target.files[0];
-    if (file) {
-        document.getElementById('task_input').value += ` [Файл: ${file.name}] `;
-        document.getElementById('result_output').innerText = `Файл "${file.name}" добавлен в сессию.`;
-    }
-}
+        // Отправка данных через мост WebViewString
+        function sendToAppInventor() {
+            const inputEl = document.getElementById('userInput');
+            const rawText = inputEl.value.trim();
+            if (!rawText) return;
 
-// Система копирования в буфер обмена телефона
-function copyText() {
-    const text = document.getElementById('result_output').innerText;
-    navigator.clipboard.writeText(text);
-    alert("Текст успешно скопирован в буфер обмена телефона!");
-}
+            document.getElementById('output').innerText = "В обработке смартфоном...";
 
-// Система Поделиться через родное меню Android
-function shareText() {
-    const text = document.getElementById('result_output').innerText;
-    if (navigator.share) {
-        navigator.share({ title: 'MSK AI Network', text: text });
-    } else {
-        alert("Функция отправки поддерживается только внутри мобильного приложения.");
-    }
-}
+            // Формируем payload: Агент + маркер разделения + Текст запроса
+            const payload = currentAgent + ":::" + rawText;
 
-// Отправка запроса по неубиваемому протоколу
-async function sendToNetwork() {
-    const inputField = document.getElementById('task_input');
-    const inputData = inputField.value.trim();
-    const outputBox = document.getElementById('result_output');
-    if (!inputData) return alert("Введите текст запроса");
-    
-    outputBox.innerText = "Анализ баз данных законодательства... Составление документа...";
-    
-    // Мгновенная автоочистка строки
-    inputField.value = "";
-    
-    try {
-        const secureGateway = "https://pollinations.ai";
-        const secureRules = " (Отвечай развернуто, профессионально, строго на русском языке, пиши как независимая закрытая нейросеть MSK AI) ";
-        const finalUrl = secureGateway + encodeURIComponent(inputData + secureRules + currentPrompt);
-        
-        const response = await fetch(finalUrl);
-        if (!response.ok) throw new Error();
-        
-        const textResult = await response.text();
-        outputBox.innerText = textResult;
-    } catch (e) {
-        outputBox.innerText = "Ошибка соединения с узлом сети. Попробуйте отправить запрос еще раз через секунду.";
-    }
-}
-</script>
+            // Передача в App Inventor
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+                window.AppInventor.setWebViewString(payload);
+            } else {
+                // Локальная отладка в браузере, если мост недоступен
+                document.getElementById('output').innerText = "Ошибка: Запущено вне App Inventor.\nPayload: " + payload;
+            }
+
+            // Мгновенная очистка поля ввода до нуля
+            inputEl.value = "";
+        }
+
+        // Прием ответа от App Inventor (вызывается автоматически при изменении WebViewString из блоков)
+        function receiveFromAppInventor(responseText) {
+            document.getElementById('output').innerText = responseText;
+        }
+
+        // Периодический опрос WebViewString (на случай, если метод обратного вызова не сработал напрямую)
+        setInterval(classCheck, 200);
+        let lastString = "";
+        function classCheck() {
+            if (window.AppInventor && window.AppInventor.getWebViewString) {
+                let currentStr = window.AppInventor.getWebViewString();
+                if (currentStr.startsWith("RESPONSE:::")) {
+                    let cleanResponse = currentStr.replace("RESPONSE:::", "");
+                    receiveFromAppInventor(cleanResponse);
+                    window.AppInventor.setWebViewString(""); // Сброс буфера
+                }
+            }
+        }
+
+        // Вспомогательные функции
+        function copyText() {
+            const text = document.getElementById('output').innerText;
+            navigator.clipboard.writeText(text);
+        }
+
+        function shareText() {
+            const text = document.getElementById('output').innerText;
+            if (navigator.share) {
+                navigator.share({ title: 'MSK AI Network', text: text });
+            }
+        }
+    </script>
 </body>
 </html>
