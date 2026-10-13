@@ -3,130 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSK AI Network</title>
+    <title>MSK AI Network - Premium</title>
     <style>
-        :root {
-            --bg-color: #131314;
-            --container-bg: #1e1f20;
-            --text-color: #e3e3e3;
-            --accent-color: #a8c7fa;
-            --input-bg: #2b2a33;
-            --btn-active: #333538;
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); padding: 16px; display: flex; flex-direction: column; height: 100vh; justify-content: space-between; }
-        
-        /* Шапка и выбор агентов */
-        .header { text-align: center; margin-bottom: 15px; }
-        .header h1 { font-size: 20px; font-weight: 500; color: var(--accent-color); }
-        .agents-tabs { display: flex; gap: 8px; margin-bottom: 15px; justify-content: center; }
-        .agent-btn { background: var(--container-bg); border: 1px solid #444; color: var(--text-color); padding: 10px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: 0.2s; }
-        .agent-btn.active { background: var(--accent-color); color: #000; font-weight: 600; border-color: var(--accent-color); }
-        
-        /* Экран вывода */
-        .display-area { flex-grow: 1; background: var(--container-bg); border-radius: 16px; padding: 16px; overflow-y: auto; margin-bottom: 15px; font-size: 15px; line-height: 1.5; border: 1px solid #2d2f31; white-space: pre-wrap; }
-        
-        /* Утилиты */
-        .utility-bar { display: flex; gap: 10px; margin-bottom: 15px; justify-content: flex-end; }
-        .util-btn { background: transparent; border: none; color: var(--accent-color); font-size: 13px; cursor: pointer; padding: 5px 10px; border-radius: 4px; }
-        .util-btn:active { background: var(--btn-active); }
-        
-        /* Контейнер ввода */
-        .input-container { display: flex; background: var(--input-bg); border-radius: 28px; padding: 6px 12px; align-items: center; border: 1px solid #52525e; }
-        .input-container input { flex-grow: 1; background: transparent; border: none; color: var(--text-color); font-size: 16px; padding: 10px; outline: none; }
-        .send-btn { background: transparent; border: none; color: var(--accent-color); font-size: 22px; cursor: pointer; padding: 0 10px; font-weight: bold; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        body { background-color: #0b0f19; color: #f3f4f6; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        header { background: linear-gradient(135deg, #1e1b4b, #311042); padding: 15px; text-align: center; border-bottom: 2px solid #4338ca; position: relative; }
+        header h1 { font-size: 18px; font-weight: bold; color: #818cf8; text-shadow: 0 0 10px rgba(99,102,241,0.5); }
+        .limit-badge { position: absolute; right: 15px; top: 15px; background: #1f2937; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; color: #f43f5e; border: 1px solid #f43f5e; }
+        .agent-selector { display: flex; justify-content: space-around; background-color: #111827; padding: 10px; border-bottom: 1px solid #1f2937; }
+        .agent-btn { background: #1f2937; border: 1px solid #374151; color: #9ca3af; padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 12px; font-weight: 600; transition: all 0.3s; }
+        .agent-btn.active { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; border-color: #818cf8; box-shadow: 0 0 12px rgba(124,58,237,0.4); }
+        .chat-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: radial-gradient(circle at top, #111827 0%, #060911 100%); }
+        .message { max-width: 85%; padding: 12px 16px; border-radius: 16px; line-height: 1.5; font-size: 15px; word-wrap: break-word; }
+        .message.user { background: #312e81; color: #e0e7ff; align-self: flex-end; border-bottom-right-radius: 4px; border: 1px solid #4338ca; }
+        .message.ai { background: #1f2937; color: #f3f4f6; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #374151; }
+        .message.system { background: transparent; color: #4b5563; font-size: 12px; align-self: center; text-align: center; }
+        .input-area { background-color: #111827; padding: 15px; display: flex; gap: 10px; align-items: center; border-top: 1px solid #1f2937; }
+        .input-wrapper { flex: 1; background: #1f2937; border: 1px solid #374151; border-radius: 25px; display: flex; align-items: center; padding: 5px 15px; }
+        input { flex: 1; background: transparent; border: none; color: #f3f4f6; height: 35px; font-size: 15px; outline: none; }
+        .send-btn { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .paywall-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(6, 9, 17, 0.95); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; z-index: 9999; }
+        .paywall-card { background: #111827; border: 2px solid #6366f1; border-radius: 24px; padding: 40px 25px; max-width: 400px; box-shadow: 0 0 30px rgba(99,102,241,0.3); }
+        .paywall-title { font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 10px; }
+        .paywall-text { color: #9ca3af; font-size: 14px; margin-bottom: 25px; line-height: 1.5; }
+        .price { font-size: 28px; font-weight: 800; color: #818cf8; margin-bottom: 25px; }
+        .pay-btn { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; padding: 15px 40px; font-size: 16px; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
-
-    <div class="header">
-        <h1>MSK AI Network</h1>
+    <header>
+        <h1>MSK AI NETWORK</h1>
+        <div class="limit-badge" id="limitBadge">Лимит: 3/3</div>
+    </header>
+    <div class="agent-selector">
+        <button class="agent-btn active" onclick="setAgent('lawyer')">⚖️ Юрист</button>
+        <button class="agent-btn" onclick="setAgent('search')">🔍 Поиск</button>
+        <button class="agent-btn" onclick="setAgent('wb')">📦 Модуль WB</button>
     </div>
-
-    <!-- Переключатели ИИ-Агентов -->
-    <div class="agents-tabs">
-        <button class="agent-btn active" onclick="selectAgent('search', this)">Общий поиск</button>
-        <button class="agent-btn" onclick="selectAgent('lawyer', this)">ИИ-Юрист РФ</button>
-        <button class="agent-btn" onclick="selectAgent('wb', this)">Модуль WB</button>
+    <div class="chat-container" id="chatBox">
+        <div class="message system">Система готова. Вам доступно 3 бесплатных премиум-запроса.</div>
     </div>
-
-    <!-- Окно ответа -->
-    <div class="display-area" id="output">Готов к работе. Введите запрос...</div>
-
-    <!-- Кнопки управления -->
-    <div class="utility-bar">
-        <button class="util-btn" onclick="copyText()">📋 Скопировать</button>
-        <button class="util-btn" onclick="shareText()">🔗 Поделиться</button>
+    <div class="input-area">
+        <div class="input-wrapper">
+            <input type="text" id="userInput" placeholder="Задайте вопрос ИИ..." onkeypress="if(event.key==='Enter') sendMessage()">
+        </div>
+        <button class="send-btn" onclick="sendMessage()">➔</button>
     </div>
-
-    <!-- Поле отправки -->
-    <div class="input-container">
-        <input type="text" id="userInput" placeholder="Спросите ИИ..." onkeydown="if(event.key === 'Enter') sendToAppInventor()">
-        <button class="send-btn" onclick="sendToAppInventor()">➔</button>
+    <div class="paywall-overlay" id="paywall">
+        <div class="paywall-card">
+            <div class="paywall-title">👑 Лимит исчерпан</div>
+            <div class="paywall-text">Вы использовали все бесплатные запросы. Оформите Premium-доступ, чтобы открыть безлимитный доступ к Высшему ИИ-Юристу, Поиску и бизнес-аналитике Wildberries.</div>
+            <div class="price">1 990 ₽ / месяц</div>
+            <button class="pay-btn" onclick="alert('В следующем шаге мы настроим реальный приём платежей сюда!')">Активировать доступ</button>
+        </div>
     </div>
-
     <script>
-        let currentAgent = "search";
-
-        function selectAgent(agent, element) {
+        let currentAgent = 'lawyer';
+        let freeRequestsLeft = 3;
+        let chatHistory = [];
+        const prompts = {
+            lawyer: "Ты — Высший Цифровой Юрист РФ компании MSK AI Network. Отвечай строго по законам РФ со ссылками на кодексы.",
+            search: "Ты — Умный ИИ-Поисковик сети MSK AI Network. Давай точную выжимку фактов.",
+            wb: "Ты — Аналитик Wildberries команды MSK AI Network. Делай SEO-оптимизацию карточек и поднимай продажи."
+        };
+        function setAgent(agent) {
             currentAgent = agent;
             document.querySelectorAll('.agent-btn').forEach(btn => btn.classList.remove('active'));
-            element.classList.add('active');
+            event.target.classList.add('active');
+            chatHistory = []; 
         }
-
-        // Отправка данных через мост WebViewString
-        function sendToAppInventor() {
-            const inputEl = document.getElementById('userInput');
-            const rawText = inputEl.value.trim();
-            if (!rawText) return;
-
-            document.getElementById('output').innerText = "В обработке смартфоном...";
-
-            // Формируем payload: Агент + маркер разделения + Текст запроса
-            const payload = currentAgent + ":::" + rawText;
-
-            // Передача в App Inventor
-            if (window.AppInventor && window.AppInventor.setWebViewString) {
-                window.AppInventor.setWebViewString(payload);
-            } else {
-                // Локальная отладка в браузере, если мост недоступен
-                document.getElementById('output').innerText = "Ошибка: Запущено вне App Inventor.\nPayload: " + payload;
-            }
-
-            // Мгновенная очистка поля ввода до нуля
-            inputEl.value = "";
-        }
-
-        // Прием ответа от App Inventor (вызывается автоматически при изменении WebViewString из блоков)
-        function receiveFromAppInventor(responseText) {
-            document.getElementById('output').innerText = responseText;
-        }
-
-        // Периодический опрос WebViewString (на случай, если метод обратного вызова не сработал напрямую)
-        setInterval(classCheck, 200);
-        let lastString = "";
-        function classCheck() {
-            if (window.AppInventor && window.AppInventor.getWebViewString) {
-                let currentStr = window.AppInventor.getWebViewString();
-                if (currentStr.startsWith("RESPONSE:::")) {
-                    let cleanResponse = currentStr.replace("RESPONSE:::", "");
-                    receiveFromAppInventor(cleanResponse);
-                    window.AppInventor.setWebViewString(""); // Сброс буфера
-                }
-            }
-        }
-
-        // Вспомогательные функции
-        function copyText() {
-            const text = document.getElementById('output').innerText;
-            navigator.clipboard.writeText(text);
-        }
-
-        function shareText() {
-            const text = document.getElementById('output').innerText;
-            if (navigator.share) {
-                navigator.share({ title: 'MSK AI Network', text: text });
-            }
+        async function sendMessage() {
+            if (freeRequestsLeft <= 0) { document.getElementById('paywall').style.display = 'flex'; return; }
+            let inputEl = document.getElementById('userInput');
+            let text = inputEl.value.trim();
+            if (!text) return;
+            inputEl.value = '';
+            let chatBox = document.getElementById('chatBox');
+            let userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerText = text;
+            chatBox.appendChild(userMsg);
+            freeRequestsLeft--;
+            document.getElementById('limitBadge').innerText = `Лимит: ${freeRequestsLeft}/3`;
+            let aiMsg = document.createElement('div');
+            aiMsg.className = 'message ai';
+            aiMsg.innerText = 'ИИ думает...';
+            chatBox.appendChild(aiMsg);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            chatHistory.push({ role: "user", content: text });
+            try {
+                let response = await fetch('https://pollinations.ai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: [{ role: "system", content: prompts[currentAgent] }, ...chatHistory],
+                        private: true
+                    })
+                });
+                let aiText = await response.text();
+                aiMsg.innerText = aiText;
+                chatHistory.push({ role: "assistant", content: aiText });
+            } catch (e) { aiMsg.innerText = 'Ошибка сети. Проверьте интернет.'; }
+            chatBox.scrollTop = chatBox.scrollHeight;
         }
     </script>
 </body>
