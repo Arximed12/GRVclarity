@@ -61,7 +61,7 @@
             chatBox.appendChild(aiMsg);
             chatBox.scrollTop = chatBox.scrollHeight;
             
-            fetch('https://vercel.app', {
+            fetch('https://msk-ai.vercel.app/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
