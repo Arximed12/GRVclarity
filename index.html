@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSK AI Network - Модуль Юрист</title>
     
-    <!-- Жесткая броня против зависания кэша на любых устройствах -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -21,7 +20,6 @@
             justify-content: center; 
             height: 100vh; 
             padding: 20px;
-            overflow: hidden;
         }
         .app-card {
             background: radial-gradient(circle at top, #111827 0%, #060911 100%);
@@ -33,7 +31,7 @@
             width: 100%;
             box-shadow: 0 0 30px rgba(99,102,241,0.3);
         }
-        h1 { font-size: 24px; font-weight: bold; color: #818cf8; margin-bottom: 10px; text-shadow: 0 0 10px rgba(99,102,241,0.5); }
+        h1 { font-size: 24px; font-weight: bold; color: #818cf8; margin-bottom: 10px; }
         p { color: #9ca3af; font-size: 14px; margin-bottom: 30px; line-height: 1.5; }
         
         .input-wrapper {
@@ -48,9 +46,6 @@
         }
         input { flex: 1; background: transparent; border: none; color: #f3f4f6; height: 40px; font-size: 15px; outline: none; }
         
-        .mic-btn { background: none; border: none; color: #80868b; cursor: pointer; font-size: 18px; padding: 4px; display: flex; align-items: center; justify-content: center; outline: none; }
-        .mic-btn.recording { color: #f43f5e; animation: pulse 1.5s infinite; }
-        
         .launch-btn { 
             background: linear-gradient(135deg, #4f46e5, #7c3aed); 
             color: white; 
@@ -61,18 +56,7 @@
             cursor: pointer; 
             font-weight: bold; 
             width: 100%;
-            transition: all 0.3s;
-            box-shadow: 0 0 15px rgba(124,58,237,0.4);
-            outline: none;
-        }
-        .launch-btn:hover { 
-            transform: scale(1.02);
-            box-shadow: 0 0 25px rgba(124,58,237,0.6);
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); }
+            display: block;
         }
     </style>
 </head>
@@ -80,76 +64,43 @@
 
     <div class="app-card">
         <h1>MSK AI NETWORK</h1>
-        <p>Задайте вопрос текстом или голосом. Система автоматически откроет решение в изолированном ИИ-интерфейсе.</p>
+        <p>Введите ваш вопрос. Браузер сам создаст безопасный и чистый запрос к ИИ-Юристу.</p>
         
-        <div class="input-wrapper">
-            <button class="mic-btn" id="micBtn" onclick="toggleVoice()" title="Голосовой ввод">🎤</button>
-            <input type="text" id="legalQuestion" placeholder="Введите ваш юридический вопрос..." onkeypress="if(event.key==='Enter') startAiLawyer()">
-        </div>
-        
-        <button class="launch-btn" onclick="startAiLawyer()">⚖️ Консультация ИИ-Юриста</button>
+        <!-- Официальная железная форма поиска, которая отправляет данные на google.ru -->
+        <form action="https://google.ru" method="GET" target="MSK_AI_Window" onsubmit="openCleanWindow()">
+            
+            <!-- Принудительно включаем русский язык и ИИ-режим (udm=50) -->
+            <input type="hidden" name="hl" value="ru">
+            <input type="hidden" name="udm" value="50">
+            
+            <div class="input-wrapper">
+                <!-- Сюда пользователь пишет свой вопрос -->
+                <input type="text" name="q" id="userQuery" placeholder="Опишите юридическую проблему..." required>
+            </div>
+            
+            <button type="submit" class="launch-btn">⚖️ Консультация ИИ-Юриста</button>
+        </form>
     </div>
 
     <script>
-        // --- ЛОГИКА РАБОТЫ МИКРОФОНА ---
-        let recognition;
-        let isRecording = false;
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.lang = 'ru-RU';
-            recognition.onresult = (e) => { document.getElementById('legalQuestion').value = e.results.transcript; };
-            recognition.onend = () => { isRecording = false; document.getElementById('micBtn').classList.remove('recording'); };
-            recognition.onerror = () => { isRecording = false; document.getElementById('micBtn').classList.remove('recording'); };
-        }
-        function toggleVoice() {
-            if (!recognition) return alert("Голосовой ввод недоступен на этом устройстве.");
-            const btn = document.getElementById('micBtn');
-            if (isRecording) {
-                recognition.stop();
-            } else {
-                isRecording = true;
-                btn.classList.add('recording');
-                document.getElementById('legalQuestion').value = '';
-                recognition.start();
+        function openCleanWindow() {
+            // Добавляем к вопросу скрытый хвост-инструкцию, чтобы Google понял, что нужен Юрист
+            const input = document.getElementById('userQuery');
+            if (input && !input.value.includes("юрист")) {
+                input.value = "юрист " + input.value + " по законам РФ статьи кодексов пошагово";
             }
-        }
 
-        // --- УНИВЕРСАЛЬНЫЙ ИИ-ЗАПУСК (ПК + СМАРТФОН) ---
-        function startAiLawyer() {
-            let inputEl = document.getElementById('legalQuestion');
-            let userText = inputEl.value.trim();
+            const width = 900;
+            const height = 650;
+            const left = (window.screen.width / 2) - (width / 2);
+            const top = (window.screen.height / 2) - (height / 2);
             
-            // Если поле пустое, ставим базовый запрос
-            if (!userText) {
-                userText = "консультация по законам РФ статьи кодексов пошагово";
-            }
-            
-            // Собираем чистую текстовую фразу для поиска без кодирования
-            const fullQuery = "юрист " + userText + " ответ по законам РФ статьи кодексов пошагово";
-            
-            // Чистая ссылка на google.ru с принудительным русским языком (hl=ru) и ИИ-режимом (udm=50)
-            const targetUrl = "https://google.ru" + encodeURIComponent(fullQuery);
-            
-            // Проверяем устройство: телефон (WebView) или компьютер
-            const isMobileApp = (navigator.userAgent.indexOf("Android") > -1) || (window.innerHeight < 400);
-            
-            if (isMobileApp) {
-                // НА ТЕЛЕФОНЕ: Перенаправляем сам WebView приложения на полный экран
-                window.location.href = targetUrl;
-            } else {
-                // НА КОМПЬЮТЕРЕ: Открываем премиальное изолированное мини-окно без адресной строки
-                const width = 900;
-                const height = 650;
-                const left = (window.screen.width / 2) - (width / 2);
-                const top = (window.screen.height / 2) - (height / 2);
-                
-                window.open(
-                    targetUrl, 
-                    "MSK_AI_Premium_Lawyer", 
-                    `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no`
-                );
-            }
+            // Заранее открываем чистое окно без адресной строки. Форма сама загрузит туда Google!
+            window.open(
+                "about:blank", 
+                "MSK_AI_Window", 
+                `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no`
+            );
         }
     </script>
 </body>
