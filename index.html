@@ -15,21 +15,18 @@
         .input-area { display: flex; gap: 10px; }
         input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #374151; background: #1f2937; color: white; outline: none; }
         button { background: #1a73e8; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        button:hover { background: #1557b0; }
     </style>
 </head>
 <body>
 
-    <h2>MSK AI — Модуль Юрист (Тест связи)</h2>
+    <h2>MSK AI — Модуль Юрист (Внутренний мост)</h2>
     <br>
     
     <div class="chat-box">
-        <!-- Окно, где будут появляться сообщения -->
         <div id="chat-window">
-            <div class="msg server-msg">Система: Связь проверена. Введите текст и нажмите Отправить.</div>
+            <div class="msg server-msg">Система: Внутренний роут настроен. Напишите текст и нажмите Отправить.</div>
         </div>
         
-        <!-- Зона ввода -->
         <div class="input-area">
             <input type="text" id="user-text" placeholder="Напишите что-нибудь..." onkeypress="if(event.key==='Enter') sendTestRequest()">
             <button onclick="sendTestRequest()">Отправить</button>
@@ -44,7 +41,6 @@
             
             const windowDiv = document.getElementById('chat-window');
             
-            // 1. Добавляем твой текст в окно чата
             const userDiv = document.createElement('div');
             userDiv.className = 'msg user-msg';
             userDiv.innerText = text;
@@ -53,23 +49,21 @@
             input.value = '';
             windowDiv.scrollTop = windowDiv.scrollHeight;
             
-            // 2. Создаем облачко для ответа сервера
             const serverDiv = document.createElement('div');
             serverDiv.className = 'msg server-msg';
-            serverDiv.innerText = "Ожидание ответа от Vercel...";
+            serverDiv.innerText = "Запрос идет через внутренний шлюз...";
             windowDiv.appendChild(serverDiv);
             windowDiv.scrollTop = windowDiv.scrollHeight;
             
             try {
-                // Используем твой точный проверенный рабочий адрес
-                const res = await fetch("https://msk-ai.vercel.app");
+                // ВНУТРЕННИЙ АДРЕС БЕЗ ДОМЕНОВ (Убирает ошибку Failed to fetch)
+                const res = await fetch("/api/chat");
                 const resultText = await res.text();
                 
-                // Отображаем то, что прислал сервер
-                serverDiv.innerText = "Ответ сервера:\n" + resultText;
+                serverDiv.innerText = "Ответ шлюза:\n" + resultText;
             } catch (e) {
                 serverDiv.style.color = "#f43f5e";
-                serverDiv.innerText = "Ошибка соединения: " + e.message;
+                serverDiv.innerText = "Ошибка шлюза: " + e.message;
             }
             windowDiv.scrollTop = windowDiv.scrollHeight;
         }
