@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "MSK AI Network - Юрист",
+  "version": "1.0",
+  "description": "Премиальный ИИ-Юрист сети MSK AI Network",
+  "permissions": ["sidePanel"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "action": {
+    "default_title": "Открыть MSK AI"
+  }
+}
