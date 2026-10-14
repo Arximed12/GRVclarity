@@ -26,7 +26,7 @@
             out.innerText = "Связываюсь с сервером Vercel...";
             try {
                 // Переключаемся на неубиваемый GET-запрос без сложных заголовков
-                const res = await fetch("https://vercel.app");
+                const res = await fetch("https://msk-ai.vercel.app");
                 const text = await res.text();
                 out.innerText = text;
             } catch (e) {
