@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSK AI Network - Премиум Модуль</title>
     
-    <!-- Защита от зависания кэша, чтобы сайт обновлялся мгновенно -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -34,7 +33,6 @@
         h2 { color: #818cf8; margin-bottom: 10px; font-size: 24px; }
         p { color: #9ca3af; font-size: 14px; margin-bottom: 30px; line-height: 1.5; }
         
-        /* Наша фирменная премиум-кнопка */
         .launch-btn { 
             background: linear-gradient(135deg, #4f46e5, #7c3aed); 
             color: white; 
@@ -60,28 +58,21 @@
         <h2>MSK AI NETWORK</h2>
         <p>Нажмите кнопку ниже, чтобы запустить изолированный модуль ИИ-Юриста в фирменном интерфейсе программы.</p>
         
-        <!-- При клике запускается наша функция маскировки -->
         <button class="launch-btn" onclick="openPremiumLawyer()">⚖️ Запустить Цифрового Юриста</button>
     </div>
 
     <script>
         function openPremiumLawyer() {
-            // Наш секретный юридический запрос для ИИ от Google
-            const searchQuery = "ИИ Юрист консультация по законам РФ статьи кодексов пошагово";
+            // Очищенная, прямая ссылка на Google AI Overview без лишнего мусора
+            const targetUrl = "https://google.com";
             
-            // Официальный адрес ИИ-поиска Google с параметром чистого вывода фактов (udm=50)
-            const targetUrl = "https://google.com" + encodeURIComponent(searchQuery) + "&udm=50";
-            
-            // Задаем точные размеры нашего фирменного окна
             const width = 900;
             const height = 650;
             
-            // Расширенная математика: вычисляем центр экрана пользователя, чтобы окно всплыло ровно посередине
             const left = (window.screen.width / 2) - (width / 2);
             const top = (window.screen.height / 2) - (height / 2);
             
-            // Магия маскировки: открываем окно, отключая адресную строку (location=no), 
-            // панели инструментов (toolbar=no) и меню (menubar=no).
+            // Запускаем окно с жестким скрытием лишних элементов браузера
             window.open(
                 targetUrl, 
                 "MSK_AI_Lawyer", 
