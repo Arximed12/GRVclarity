@@ -19,12 +19,12 @@
 </head>
 <body>
 
-    <h2>MSK AI — Модуль Юрист (Внутренний мост)</h2>
+    <h2>MSK AI — Модуль Юрист (Финальный тест связи)</h2>
     <br>
     
     <div class="chat-box">
         <div id="chat-window">
-            <div class="msg server-msg">Система: Внутренний роут настроен. Напишите текст и нажмите Отправить.</div>
+            <div class="msg server-msg">Система: Твоя ссылка Vercel вшита. Напишите текст и нажмите Отправить.</div>
         </div>
         
         <div class="input-area">
@@ -51,16 +51,19 @@
             
             const serverDiv = document.createElement('div');
             serverDiv.className = 'msg server-msg';
-            serverDiv.innerText = "Запрос идет через внутренний шлюз...";
+            serverDiv.innerText = "Отправка на твой Vercel...";
             windowDiv.appendChild(serverDiv);
             windowDiv.scrollTop = windowDiv.scrollHeight;
             
             try {
-                // ВНУТРЕННИЙ АДРЕС БЕЗ ДОМЕНОВ (Убирает ошибку Failed to fetch)
-                const res = await fetch("/api/chat");
+                // ТВОЯ ТОЧНАЯ ССЫЛКА НА ОБРАБОТЧИК С ЗАЩИТОЙ ОТ БЛОКИРОВОК БРАУЗЕРА
+                const res = await fetch("https://msk-ai.vercel.app/", {
+                    method: "GET",
+                    mode: "cors"
+                });
                 const resultText = await res.text();
                 
-                serverDiv.innerText = "Ответ шлюза:\n" + resultText;
+                serverDiv.innerText = "Твой Vercel ответил:\n" + resultText;
             } catch (e) {
                 serverDiv.style.color = "#f43f5e";
                 serverDiv.innerText = "Ошибка шлюза: " + e.message;
