@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSK AI Network - Премиум Модуль</title>
+    <title>MSK AI Network - Виджет</title>
     
+    <!-- Жесткий сброс кэша -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -56,28 +57,38 @@
 
     <div class="container">
         <h2>MSK AI NETWORK</h2>
-        <p>Нажмите кнопку ниже, чтобы запустить изолированный модуль ИИ-Юриста в фирменном интерфейсе программы.</p>
+        <p>Нажмите кнопку ниже, чтобы запустить компактную панель ввода ИИ-Юриста в режиме маски.</p>
         
-        <button class="launch-btn" onclick="openPremiumLawyer()">⚖️ Запустить Цифрового Юриста</button>
+        <button class="launch-btn" onclick="openTargetWidget()">⚖️ Запустить Цифрового Юриста</button>
     </div>
 
     <script>
-        function openPremiumLawyer() {
-            // Очищенная, прямая ссылка на Google AI Overview без лишнего мусора
+        function openTargetWidget() {
+            // Ссылка на Google ИИ-Поиск с авто-фокусом на форму ввода
             const targetUrl = "https://google.com";
             
-            const width = 900;
-            const height = 650;
+            // Задаем узкие компактные размеры ровно под панель ввода со скриншота
+            const width = 550;
+            const height = 180; // Сжимаем высоту, чтобы отрезать верхнюю часть страницы
             
+            // Центрируем окно по экрану
             const left = (window.screen.width / 2) - (width / 2);
             const top = (window.screen.height / 2) - (height / 2);
             
-            // Запускаем окно с жестким скрытием лишних элементов браузера
-            window.open(
+            // Открываем окно в режиме скрытия панелей навигации
+            const myWindow = window.open(
                 targetUrl, 
-                "MSK_AI_Lawyer", 
-                `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no`
+                "MSK_AI_Widget", 
+                `width=${width},height=${height},top=${top},left=${left},resizable=no,scrollbars=no,status=no,toolbar=no,menubar=no,location=no`
             );
+            
+            // Дополнительный JS-трюк: принудительно прокручиваем окно вниз через секунду после открытия,
+            // чтобы весь верхний текст гарантированно улетел за границы видимости
+            if (myWindow) {
+                setTimeout(() => {
+                    myWindow.scrollTo(0, 9999);
+                }, 1200);
+            }
         }
     </script>
 </body>
