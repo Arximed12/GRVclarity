@@ -3,61 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест Связи MSK AI</title>
-    
-    <!-- Жесткая защита против зависания памяти (кэша) -->
+    <title>Финальный Тест</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    
     <style>
         body { background-color: #0b0f19; color: white; font-family: sans-serif; padding: 40px; text-align: center; }
-        .test-box { background: #111827; border: 1px solid #1f2937; padding: 30px; border-radius: 16px; max-width: 600px; margin: 0 auto; }
-        button { background: #4f46e5; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 20px; }
-        button:hover { background: #7c3aed; }
-        #output { margin-top: 30px; padding: 15px; background: #1f2937; border-radius: 8px; text-align: left; white-space: pre-wrap; color: #818cf8; min-height: 50px; }
+        .box { background: #111827; padding: 30px; border-radius: 16px; max-width: 500px; margin: 0 auto; border: 1px solid #1f2937; }
+        button { background: #1a73e8; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; }
+        #output { margin-top: 20px; padding: 15px; background: #1f2937; border-radius: 8px; color: #818cf8; }
     </style>
 </head>
 <body>
-
-    <div class="test-box">
-        <h1>Проверка моста: GitHub ➔ Vercel ➔ Groq</h1>
-        <p>Нажмите на кнопку ниже, чтобы отправить тестовый запрос ИИ-Юристу через ваш сервер Vercel.</p>
-        
-        <button onclick="runConnectionTest()">⚖️ Запустить тест связи</button>
-        
-        <div id="output">Здесь появится ответ от сервера или ошибка...</div>
+    <div class="box">
+        <h2>Проверка связи (Вариант без CORS)</h2>
+        <br>
+        <button onclick="test()">📡 Проверить мост данных</button>
+        <div id="output">Нажмите кнопку...</div>
     </div>
 
     <script>
-        async function runConnectionTest() {
-            const outputDiv = document.getElementById('output');
-            outputDiv.innerText = "Отправка запроса на Vercel... Ожидайте...";
-            
-            // Твой адрес сервера Vercel
-            const serverUrl = "https://vercel.app";
-            
+        async function test() {
+            const out = document.getElementById('output');
+            out.innerText = "Связываюсь с сервером Vercel...";
             try {
-                // Делаем прямой тестовый POST-запрос строго по твоему паспорту
-                const response = await fetch(serverUrl, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        message: "Привет! Если ты видишь это сообщение, значит связь между GitHub, Vercel и Groq работает идеально. Напиши три слова: Мост связи работает.",
-                        systemPrompt: "Ты — технический ассистент."
-                    })
-                });
-                
-                // Получаем ответ от серверного файла chat.js
-                const resultText = await response.text();
-                outputDiv.innerText = resultText;
-                
-            } catch (error) {
-                // Если связь оборвалась — выводим техническую деталь
-                outputDiv.style.color = "#f43f5e";
-                outputDiv.innerText = "Ошибка соединения! Причина: " + error.message + "\n\nВозможные причины:\n1. Сервер Vercel еще не обновился.\n2. В коде api/chat.js или в настройках ключа GROQ_API_KEY есть нестыковка.";
+                // Переключаемся на неубиваемый GET-запрос без сложных заголовков
+                const res = await fetch("https://vercel.app");
+                const text = await res.text();
+                out.innerText = text;
+            } catch (e) {
+                out.innerText = "Ошибка: " + e.message;
             }
         }
     </script>
