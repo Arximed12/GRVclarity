@@ -3,72 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест Связи: Чат</title>
+    <title>MSK AI Network - Премиум Модуль</title>
+    
+    <!-- Защита от зависания кэша, чтобы сайт обновлялся мгновенно -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
     <style>
-        body { background-color: #0b0f19; color: white; font-family: sans-serif; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .chat-box { background: #111827; padding: 20px; border-radius: 16px; width: 100%; max-width: 500px; border: 1px solid #1f2937; }
-        #chat-window { height: 300px; overflow-y: auto; background: #060911; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #1f2937; }
-        .msg { margin-bottom: 10px; padding: 8px 12px; border-radius: 8px; max-width: 85%; word-wrap: break-word; }
-        .user-msg { background: #1a73e8; color: white; margin-left: auto; text-align: right; }
-        .server-msg { background: #1f2937; color: #818cf8; }
-        .input-area { display: flex; gap: 10px; }
-        input { flex: 1; padding: 12px; border-radius: 8px; border: 1px solid #374151; background: #1f2937; color: white; outline: none; }
-        button { background: #1a73e8; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        body { 
+            background-color: #0b0f19; 
+            color: white; 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0;
+        }
+        .container {
+            background: #111827; 
+            padding: 40px; 
+            border-radius: 24px; 
+            border: 1px solid #1f2937; 
+            text-align: center;
+            max-width: 450px;
+            box-shadow: 0 0 30px rgba(99,102,241,0.2);
+        }
+        h2 { color: #818cf8; margin-bottom: 10px; font-size: 24px; }
+        p { color: #9ca3af; font-size: 14px; margin-bottom: 30px; line-height: 1.5; }
+        
+        /* Наша фирменная премиум-кнопка */
+        .launch-btn { 
+            background: linear-gradient(135deg, #4f46e5, #7c3aed); 
+            color: white; 
+            border: none; 
+            padding: 16px 32px; 
+            border-radius: 50px; 
+            font-size: 16px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: all 0.3s;
+            box-shadow: 0 0 15px rgba(124,58,237,0.4);
+            outline: none;
+        }
+        .launch-btn:hover { 
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(124,58,237,0.6);
+        }
     </style>
 </head>
 <body>
 
-    <h2>MSK AI — Модуль Юрист (Финальный тест связи)</h2>
-    <br>
-    
-    <div class="chat-box">
-        <div id="chat-window">
-            <div class="msg server-msg">Система: Твоя ссылка Vercel вшита. Напишите текст и нажмите Отправить.</div>
-        </div>
+    <div class="container">
+        <h2>MSK AI NETWORK</h2>
+        <p>Нажмите кнопку ниже, чтобы запустить изолированный модуль ИИ-Юриста в фирменном интерфейсе программы.</p>
         
-        <div class="input-area">
-            <input type="text" id="user-text" placeholder="Напишите что-нибудь..." onkeypress="if(event.key==='Enter') sendTestRequest()">
-            <button onclick="sendTestRequest()">Отправить</button>
-        </div>
+        <!-- При клике запускается наша функция маскировки -->
+        <button class="launch-btn" onclick="openPremiumLawyer()">⚖️ Запустить Цифрового Юриста</button>
     </div>
 
     <script>
-        async function sendTestRequest() {
-            const input = document.getElementById('user-text');
-            const text = input.value.trim();
-            if (!text) return;
+        function openPremiumLawyer() {
+            // Наш секретный юридический запрос для ИИ от Google
+            const searchQuery = "ИИ Юрист консультация по законам РФ статьи кодексов пошагово";
             
-            const windowDiv = document.getElementById('chat-window');
+            // Официальный адрес ИИ-поиска Google с параметром чистого вывода фактов (udm=50)
+            const targetUrl = "https://google.com" + encodeURIComponent(searchQuery) + "&udm=50";
             
-            const userDiv = document.createElement('div');
-            userDiv.className = 'msg user-msg';
-            userDiv.innerText = text;
-            windowDiv.appendChild(userDiv);
+            // Задаем точные размеры нашего фирменного окна
+            const width = 900;
+            const height = 650;
             
-            input.value = '';
-            windowDiv.scrollTop = windowDiv.scrollHeight;
+            // Расширенная математика: вычисляем центр экрана пользователя, чтобы окно всплыло ровно посередине
+            const left = (window.screen.width / 2) - (width / 2);
+            const top = (window.screen.height / 2) - (height / 2);
             
-            const serverDiv = document.createElement('div');
-            serverDiv.className = 'msg server-msg';
-            serverDiv.innerText = "Отправка на твой Vercel...";
-            windowDiv.appendChild(serverDiv);
-            windowDiv.scrollTop = windowDiv.scrollHeight;
-            
-            try {
-                // ТВОЯ ТОЧНАЯ ССЫЛКА НА ОБРАБОТЧИК С ЗАЩИТОЙ ОТ БЛОКИРОВОК БРАУЗЕРА
-                const res = await fetch("https://msk-ai.vercel.app/", {
-                    method: "GET",
-                    mode: "cors"
-                });
-                const resultText = await res.text();
-                
-                serverDiv.innerText = "Твой Vercel ответил:\n" + resultText;
-            } catch (e) {
-                serverDiv.style.color = "#f43f5e";
-                serverDiv.innerText = "Ошибка шлюза: " + e.message;
-            }
-            windowDiv.scrollTop = windowDiv.scrollHeight;
+            // Магия маскировки: открываем окно, отключая адресную строку (location=no), 
+            // панели инструментов (toolbar=no) и меню (menubar=no).
+            window.open(
+                targetUrl, 
+                "MSK_AI_Lawyer", 
+                `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no`
+            );
         }
     </script>
 </body>
