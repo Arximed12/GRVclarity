@@ -3,169 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSK AI Network - Юрист Premium</title>
+    <title>Тест Связи MSK AI</title>
     
-    <!-- Жесткая защита от зависания памяти (кэша) на телефонах и ПК -->
+    <!-- Жесткая защита против зависания памяти (кэша) -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { background-color: #0b0f19; color: #f3f4f6; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        
-        /* Верхняя панель */
-        header { background: linear-gradient(135deg, #1e1b4b, #311042); padding: 15px; text-align: center; border-bottom: 2px solid #4338ca; position: relative; }
-        header h1 { font-size: 18px; font-weight: bold; color: #818cf8; text-shadow: 0 0 10px rgba(99,102,241,0.5); }
-        .limit-badge { position: absolute; right: 15px; top: 15px; background: #1f2937; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; color: #f43f5e; border: 1px solid #f43f5e; }
-        
-        /* Окно сообщений чата */
-        .chat-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: radial-gradient(circle at top, #111827 0%, #060911 100%); }
-        .message { max-width: 85%; padding: 12px 16px; border-radius: 16px; line-height: 1.5; font-size: 15px; word-wrap: break-word; }
-        .message.user { align-self: flex-end; background: #312e81; color: #e0e7ff; border-bottom-right-radius: 4px; border: 1px solid #4338ca; }
-        .message.ai { align-self: flex-start; background: #1f2937; color: #f3f4f6; border-bottom-left-radius: 4px; border: 1px solid #374151; white-space: pre-wrap; }
-        .message.system { background: transparent; color: #4b5563; font-size: 12px; align-self: center; text-align: center; }
-        
-        /* Нижняя зона ввода */
-        .input-area { background-color: #111827; padding: 15px; display: flex; gap: 10px; align-items: center; border-top: 1px solid #1f2937; }
-        .input-wrapper { flex: 1; background: #1f2937; border: 1px solid #374151; border-radius: 25px; display: flex; align-items: center; padding: 5px 15px; gap: 8px; }
-        input { flex: 1; background: transparent; border: none; color: #f3f4f6; height: 35px; font-size: 15px; outline: none; }
-        
-        /* Кнопка микрофона */
-        .mic-btn { background: none; border: none; color: #80868b; cursor: pointer; font-size: 18px; padding: 4px; display: flex; align-items: center; justify-content: center; outline: none; }
-        .mic-btn.recording { color: #f43f5e; animation: pulse 1.5s infinite; }
-        
-        /* Кнопка отправки */
-        .send-btn { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 18px; outline: none; }
-        
-        /* Премиум-окно блокировки (Paywall с размытием матового стекла) */
-        .paywall-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(6, 9, 17, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 30px; text-align: center; z-index: 9999; }
-        .paywall-card { background: #111827; border: 2px solid #6366f1; border-radius: 24px; padding: 40px 25px; max-width: 400px; box-shadow: 0 0 30px rgba(99,102,241,0.3); }
-        .paywall-title { font-size: 22px; font-weight: bold; color: #fff; margin-bottom: 10px; }
-        .paywall-text { color: #9ca3af; font-size: 14px; margin-bottom: 25px; line-height: 1.5; }
-        .price { font-size: 28px; font-weight: 800; color: #818cf8; margin-bottom: 25px; }
-        .pay-btn { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; padding: 15px 40px; font-size: 16px; font-weight: bold; border-radius: 50px; cursor: pointer; width: 100%; }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1); }
-        }
+        body { background-color: #0b0f19; color: white; font-family: sans-serif; padding: 40px; text-align: center; }
+        .test-box { background: #111827; border: 1px solid #1f2937; padding: 30px; border-radius: 16px; max-width: 600px; margin: 0 auto; }
+        button { background: #4f46e5; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: bold; margin-top: 20px; }
+        button:hover { background: #7c3aed; }
+        #output { margin-top: 30px; padding: 15px; background: #1f2937; border-radius: 8px; text-align: left; white-space: pre-wrap; color: #818cf8; min-height: 50px; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>⚖️ ЦИФРОВОЙ ЮРИСТ РФ</h1>
-        <div class="limit-badge" id="limitBadge">Лимит: 3/3</div>
-    </header>
-    
-    <div class="chat-container" id="chatBox">
-        <div class="message system">Высший ИИ-Юрист на базе Groq Llama 3 готов к работе. Вам доступно 3 бесплатных премиум-запроса (Premium: 500 ₽/мес).</div>
-    </div>
-    
-    <div class="input-area">
-        <div class="input-wrapper">
-            <button class="mic-btn" id="micBtn" onclick="toggleVoiceInput()" title="Голосовой ввод">🎤</button>
-            <input type="text" id="userInput" placeholder="Опишите вашу юридическую проблему..." onkeypress="if(event.key==='Enter') sendMessage()">
-        </div>
-        <button class="send-btn" onclick="sendMessage()">➔</button>
-    </div>
-    
-    <div class="paywall-overlay" id="paywall">
-        <div class="paywall-card">
-            <div class="paywall-title">👑 Лимит исчерпан</div>
-            <div class="paywall-text">Вы использовали все бесплатные запросы. Оформите Premium-доступ, чтобы открыть безлимитный доступ к Высшему ИИ-Юристу РФ компании MSK AI Network.</div>
-            <div class="price">500 ₽ / месяц</div>
-            <button class="pay-btn" onclick="alert('В следующем шаге мы настроим реальный приём платежей сюда!')">Активировать доступ</button>
-        </div>
+
+    <div class="test-box">
+        <h1>Проверка моста: GitHub ➔ Vercel ➔ Groq</h1>
+        <p>Нажмите на кнопку ниже, чтобы отправить тестовый запрос ИИ-Юристу через ваш сервер Vercel.</p>
+        
+        <button onclick="runConnectionTest()">⚖️ Запустить тест связи</button>
+        
+        <div id="output">Здесь появится ответ от сервера или ошибка...</div>
     </div>
 
     <script>
-        // Инициализация счетчика лимитов в памяти браузера (Защита от сброса через F5)
-        if (localStorage.getItem('msk_ai_limits') === null) {
-            localStorage.setItem('msk_ai_limits', '3');
-        }
-        let freeRequestsLeft = parseInt(localStorage.getItem('msk_ai_limits'));
-        document.getElementById('limitBadge').innerText = `Лимит: ${freeRequestsLeft}/3`;
-        
-        // Жесткий системный промпт для Groq по законам РФ
-        const systemPrompt = "Ты — Высший Цифровой Юрист РФ компании MSK AI Network. Отвечай строго по законам РФ со ссылками на действующие кодексы и статьи (ГК РФ, ЗоЗПП РФ, УК РФ и др.). Давай четкие, пошаговые инструкции решения проблемы на русском языке.";
-        
-        // Твой официальный рабочий адрес серверного шлюза Vercel
-        const versonServerUrl = "https://vercel.app";
-
-        // --- ЛОГИКА МИКРОФОНА (ГОЛОСОВОЙ ВВОД) ---
-        let recognition;
-        let isRecording = false;
-        let silenceTimer;
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.lang = 'ru-RU';
-            recognition.onresult = (e) => { 
-                document.getElementById('userInput').value = e.results[0][0].transcript; 
-            };
-            recognition.onend = () => { stopRecordingLogic(); };
-            recognition.onerror = () => { stopRecordingLogic(); };
-        }
-        
-        function toggleVoiceInput() {
-            if (!recognition) return alert("Голосовой ввод не поддерживается вашим браузером. Откройте через Chrome.");
-            const btn = document.getElementById('micBtn');
-            if (isRecording) {
-                recognition.stop();
-            } else {
-                isRecording = true;
-                btn.classList.add('recording');
-                document.getElementById('userInput').value = '';
-                recognition.start();
-                // Защитный таймаут от зависания тишины (6 секунд)
-                clearTimeout(silenceTimer);
-                silenceTimer = setTimeout(() => { if (isRecording) recognition.stop(); }, 6000);
-            }
-        }
-        function stopRecordingLogic() {
-            isRecording = false;
-            clearTimeout(silenceTimer);
-            const btn = document.getElementById('micBtn');
-            if (btn) btn.classList.remove('recording');
-        }
-        
-        // --- ОТПРАВКА СООБЩЕНИЙ НА СЕРВЕР VERCEL ---
-        async function sendMessage() {
-            // Защитная проверка лимита перед каждым действием
-            if (freeRequestsLeft <= 0) { 
-                document.getElementById('paywall').style.display = 'flex'; 
-                return; 
-            }
+        async function runConnectionTest() {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerText = "Отправка запроса на Vercel... Ожидайте...";
             
-            let inputEl = document.getElementById('userInput');
-            let text = inputEl.value.trim();
-            if (!text) return;
-            inputEl.value = '';
-            
-            let chatBox = document.getElementById('chatBox');
-            
-            // Выводим сообщение пользователя на экран
-            let userMsg = document.createElement('div');
-            userMsg.className = 'message user';
-            userMsg.innerText = text;
-            chatBox.appendChild(userMsg);
-            
-            // Списание лимита и фиксация в памяти устройства
-            freeRequestsLeft--;
-            localStorage.setItem('msk_ai_limits', freeRequestsLeft.toString());
-            document.getElementById('limitBadge').innerText = `Лимит: ${freeRequestsLeft}/3`;
-            
-            // Создание облачка под ответ ИИ
-            let aiMsg = document.createElement('div');
-            aiMsg.className = 'message ai';
-            aiMsg.innerText = 'Юрист изучает законы РФ...';
-            chatBox.appendChild(aiMsg);
-            chatBox.scrollTop = chatBox.scrollHeight;
+            // Твой адрес сервера Vercel
+            const serverUrl = "https://vercel.app";
             
             try {
-                // Официальный POST запрос на твой сервер Vercel по техническому паспорту
-                let response = await fetch(versonServerUrl, {
+                // Делаем прямой тестовый POST-запрос строго по твоему паспорту
+                const response = await fetch(serverUrl, {
                     method: "POST",
                     headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        message: "Привет! Если ты видишь это сообщение, значит связь между GitHub, Vercel и Groq работает идеально. Напиши три слова: Мост связи работает.",
+                        systemPrompt: "Ты — технический ассистент."
+                    })
+                });
+                
+                // Получаем ответ от серверного файла chat.js
+                const resultText = await response.text();
+                outputDiv.innerText = resultText;
+                
+            } catch (error) {
+                // Если связь оборвалась — выводим техническую деталь
+                outputDiv.style.color = "#f43f5e";
+                outputDiv.innerText = "Ошибка соединения! Причина: " + error.message + "\n\nВозможные причины:\n1. Сервер Vercel еще не обновился.\n2. В коде api/chat.js или в настройках ключа GROQ_API_KEY есть нестыковка.";
+            }
+        }
+    </script>
+</body>
+</html>
