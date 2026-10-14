@@ -41,14 +41,13 @@
     </div>
 
     <script>
-        function testSendMessage() {
+                function testSendMessage() {
             let inputEl = document.getElementById('userInput');
             let text = inputEl.value.trim();
             if (!text) return;
             
             let chatBox = document.getElementById('chatBox');
             
-            // 1. Отображаем ваше слово на экране
             let userMsg = document.createElement('div');
             userMsg.className = 'message user';
             userMsg.innerText = text;
@@ -56,17 +55,31 @@
             
             inputEl.value = '';
             
-            // 2. Имитируем моментальный ответ от приложения
-            setTimeout(() => {
-                let aiMsg = document.createElement('div');
-                aiMsg.className = 'message ai';
-                aiMsg.innerText = "Пробный тест пройден! Ваше приложение index.html работает идеально, экран обновляется и принимает сообщения.";
-                chatBox.appendChild(aiMsg);
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 500);
-            
+            let aiMsg = document.createElement('div');
+            aiMsg.className = 'message ai';
+            aiMsg.innerText = "MSK AI думает...";
+            chatBox.appendChild(aiMsg);
             chatBox.scrollTop = chatBox.scrollHeight;
+            
+            fetch('https://vercel.app', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    message: text, 
+                    systemPrompt: "Ты — полезный ИИ-ассистент сети MSK AI Network. Отвечай четко, коротко и только на русском языке." 
+                })
+            })
+            .then(response => response.text())
+            .then(aiText => {
+                aiMsg.innerText = aiText;
+                chatBox.scrollTop = chatBox.scrollHeight;
+            })
+            .catch(() => {
+                aiMsg.innerText = "Ошибка связи. Повторите запрос через секунду.";
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
         }
+
     </script>
 </body>
 </html>
