@@ -1,24 +1,14 @@
-export const config = {
-    runtime: 'edge',
-};
+export default function handler(req, res) {
+    // Вшиваем железобетонные заголовки CORS для защиты от "Failed to fetch"
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-export default async function handler(req) {
-    // Формируем идеальные заголовки CORS, которые пробивают любую блокировку
-    const headers = {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'GET, OPTIONS',
-        'Access-Control-Allow-Headers': '*',
-        'Content-Type': 'text/plain; charset=utf-8'
-    };
-
-    // Одобрение предварительного запроса браузера
+    // Если браузер делает предварительную проверку связи (OPTIONS)
     if (req.method === 'OPTIONS') {
-        return new Response(null, { status: 200, headers });
+        return res.status(200).end();
     }
 
-    // Возвращаем чистый текстовый ответ
-    return new Response("Ура! Сервер Vercel на Edge Runtime успешно работает!", {
-        status: 200,
-        headers: headers
-    });
+    // Твой серверный тестовый ответ
+    return res.status(200).send("Ура! Сервер Vercel успешно выполнил скрипт и ответил на GitHub Pages!");
 }
