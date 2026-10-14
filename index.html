@@ -1,14 +1,72 @@
-// Пробный мини-код для точной проверки связи
-export default async function handler(req, res) {
-    // Разрешаем сайту читать ответ
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSK AI Network - Тестовый Скрипт</title>
+    <!-- Защита от зависания памяти телефона -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #0b0f19; color: #f3f4f6; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        header { background: linear-gradient(135deg, #1e1b4b, #311042); padding: 15px; text-align: center; border-bottom: 2px solid #4338ca; }
+        header h1 { font-size: 18px; font-weight: bold; color: #818cf8; }
+        
+        .chat-container { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #060911; }
+        .message { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 15px; line-height: 1.5; }
+        .message.user { align-self: flex-end; background: #312e81; color: #e0e7ff; border-bottom-right-radius: 4px; }
+        .message.ai { align-self: flex-start; background: #1f2937; color: #f3f4f6; border-bottom-left-radius: 4px; }
+        .message.system { background: transparent; color: #4b5563; font-size: 12px; align-self: center; }
+        
+        .input-area { background-color: #111827; padding: 15px; display: flex; gap: 10px; border-top: 1px solid #1f2937; }
+        input { flex: 1; background: #1f2937; border: 1px solid #374151; color: #f3f4f6; height: 40px; font-size: 15px; border-radius: 20px; padding: 0 15px; outline: none; }
+        button { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 18px; }
+    </style>
+</head>
+<body>
 
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
-    }
+    <header>
+        <h1>MSK AI NETWORK (ПРОБНЫЙ ТЕСТ)</h1>
+    </header>
+    
+    <div class="chat-container" id="chatBox">
+        <div class="message system">Приложение запущено. Отправьте любое слово для проверки экрана.</div>
+    </div>
+    
+    <div class="input-area">
+        <input type="text" id="userInput" placeholder="Напишите привет..." onkeypress="if(event.key==='Enter') testSendMessage()">
+        <button onclick="testSendMessage()">➔</button>
+    </div>
 
-    // Возвращаем простое, понятное текстовое окно
-    res.status(200).send("Тест пройден! Сайт на GitHub успешно связался со шлюзом.");
-}
+    <script>
+        function testSendMessage() {
+            let inputEl = document.getElementById('userInput');
+            let text = inputEl.value.trim();
+            if (!text) return;
+            
+            let chatBox = document.getElementById('chatBox');
+            
+            // 1. Отображаем ваше слово на экране
+            let userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerText = text;
+            chatBox.appendChild(userMsg);
+            
+            inputEl.value = '';
+            
+            // 2. Имитируем моментальный ответ от приложения
+            setTimeout(() => {
+                let aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai';
+                aiMsg.innerText = "Пробный тест пройден! Ваше приложение index.html работает идеально, экран обновляется и принимает сообщения.";
+                chatBox.appendChild(aiMsg);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 500);
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html>
