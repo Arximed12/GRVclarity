@@ -98,7 +98,7 @@
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
             recognition.lang = 'ru-RU';
-            recognition.onresult = (e) => { document.getElementById('legalQuestion').value = e.results[0].transcript; };
+            recognition.onresult = (e) => { document.getElementById('legalQuestion').value = e.results.transcript; };
             recognition.onend = () => { isRecording = false; document.getElementById('micBtn').classList.remove('recording'); };
             recognition.onerror = () => { isRecording = false; document.getElementById('micBtn').classList.remove('recording'); };
         }
@@ -118,27 +118,27 @@
         // --- УНИВЕРСАЛЬНЫЙ ИИ-ЗАПУСК (ПК + СМАРТФОН) ---
         function startAiLawyer() {
             let inputEl = document.getElementById('legalQuestion');
-            let text = inputEl.value.trim();
+            let userText = inputEl.value.trim();
             
-            // Если поле пустое, ставим базовый промпт юриста
-            if (!text) {
-                text = "юрист консультация по законам РФ статьи кодексов пошагово";
-            } else {
-                // Добавляем жесткую юридическую инструкцию к вопросу пользователя
-                text = text + " ответь как юрист по законам РФ со ссылками на статьи кодексов пошагово";
+            // Если поле пустое, ставим базовый запрос
+            if (!userText) {
+                userText = "консультация по законам РФ статьи кодексов пошагово";
             }
             
-            // Ссылка на чистый ИИ-режим Google (без лишних текстов и меню)
-            const targetUrl = "https://google.com" + encodeURIComponent(text) + "&udm=50";
+            // Собираем чистую текстовую фразу для поиска без кодирования
+            const fullQuery = "юрист " + userText + " ответ по законам РФ статьи кодексов пошагово";
             
-            // Проверяем: открыт ли сайт внутри телефона (MIT App Inventor WebView) или на ПК
+            // Чистая ссылка на google.ru с принудительным русским языком (hl=ru) и ИИ-режимом (udm=50)
+            const targetUrl = "https://google.ru" + encodeURIComponent(fullQuery);
+            
+            // Проверяем устройство: телефон (WebView) или компьютер
             const isMobileApp = (navigator.userAgent.indexOf("Android") > -1) || (window.innerHeight < 400);
             
             if (isMobileApp) {
-                // НА ТЕЛЕФОНЕ: Перенаправляем сам WebView приложения на полный экран без рамок
+                // НА ТЕЛЕФОНЕ: Перенаправляем сам WebView приложения на полный экран
                 window.location.href = targetUrl;
             } else {
-                // НА КОМПЬЮТЕРЕ: Открываем премиальное изолированное мини-окно без адресной строки и вкладок
+                // НА КОМПЬЮТЕРЕ: Открываем премиальное изолированное мини-окно без адресной строки
                 const width = 900;
                 const height = 650;
                 const left = (window.screen.width / 2) - (width / 2);
