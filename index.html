@@ -3,105 +3,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MSK AI Network - Модуль Юрист</title>
+    <title>MSK AI Network - Разум Юриста</title>
     
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    
+
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { 
-            background-color: #0b0f19; 
-            color: #f3f4f6; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Segoe UI", system-ui, sans-serif; }
+        
+        body {
+            background-color: #010019;
+            color: #f3f4f6;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
             padding: 20px;
         }
+
         .app-card {
-            background: radial-gradient(circle at top, #111827 0%, #060911 100%);
-            padding: 40px 25px; 
-            border-radius: 24px; 
-            border: 2px solid #4338ca; 
+            background: radial-gradient(circle at top, #111027 0%, #060511 100%);
+            padding: 40px 25px;
+            border-radius: 24px;
+            border: 2px solid #4338ca;
             text-align: center;
             max-width: 450px;
             width: 100%;
-            box-shadow: 0 0 30px rgba(99,102,241,0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         }
-        h1 { font-size: 24px; font-weight: bold; color: #818cf8; margin-bottom: 10px; }
-        p { color: #9ca3af; font-size: 14px; margin-bottom: 30px; line-height: 1.5; }
-        
-        .input-wrapper {
-            background: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 25px;
-            display: flex;
-            align-items: center;
-            padding: 5px 15px;
-            gap: 8px;
+
+        .subtitle {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #ff9800;
+            letter-spacing: 1.5px;
             margin-bottom: 20px;
         }
-        input { flex: 1; background: transparent; border: none; color: #f3f4f6; height: 40px; font-size: 15px; outline: none; }
-        
-        .launch-btn { 
-            background: linear-gradient(135deg, #4f46e5, #7c3aed); 
-            color: white; 
-            border: none; 
-            padding: 16px 32px; 
-            border-radius: 50px; 
-            font-size: 16px; 
-            cursor: pointer; 
-            font-weight: bold; 
+
+        /* Стиль для выпадающего списка */
+        .dropdown {
             width: 100%;
-            display: block;
+            background-color: #16152d;
+            border: 1px solid #4338ca;
+            border-radius: 12px;
+            padding: 14px;
+            color: #ffffff;
+            font-size: 14px;
+            margin-bottom: 15px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .dropdown optgroup {
+            background-color: #060511;
+            color: #8b949e;
+            font-style: normal;
+        }
+
+        .dropdown option {
+            background-color: #16152d;
+            color: #ffffff;
+            padding: 10px;
+        }
+
+        /* Поле ввода текста */
+        .text-input {
+            width: 100%;
+            background-color: #16152d;
+            border: 1px solid #4338ca;
+            border-radius: 12px;
+            padding: 14px;
+            color: #ffffff;
+            font-size: 14px;
+            margin-bottom: 15px;
+            min-height: 80px;
+            resize: none;
+            outline: none;
+        }
+
+        /* СЕТКА ДЛЯ 4 ДИНАМИЧЕСКИХ КНОПОК */
+        .quick-buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .quick-btn {
+            background-color: #1a1936;
+            border: 1px solid #312e81;
+            border-radius: 12px;
+            padding: 14px 12px;
+            color: #f3f4f6;
+            font-size: 13px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-btn:hover {
+            background-color: #23224d;
+            border-color: #6366f1;
+            transform: translateY(-1px);
+        }
+
+        /* Главная кнопка */
+        .main-submit-btn {
+            width: 100%;
+            background-color: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .main-submit-btn:hover {
+            background-color: #4f46e5;
         }
     </style>
 </head>
 <body>
 
-    <div class="app-card">
-        <h1>MSK AI NETWORK</h1>
-        <p>Введите ваш вопрос. Браузер сам создаст безопасный и чистый запрос к ИИ-Юристу.</p>
+<div class="app-card">
+    <div style="font-size: 22px; font-weight: bold; margin-bottom: 5px; letter-spacing: 1px;">MSK AI NETWORK</div>
+    <div class="subtitle">👑 Премиальный ИИ-Ассистент</div>
+
+    <!-- ВАШ ИСХОДНЫЙ СПИСОК С ГРУППАМИ -->
+    <select class="dropdown" id="main-select" onchange="updateQuickButtons()">
+        <optgroup label="⚖️ Юриспруденция и Защита прав">
+            <option value="legal-pretension" selected>🛡️ Досудебные претензии</option>
+            <option value="legal-contracts">📄 Договоры и Расписки</option>
+            <option value="legal-fines">🚨 Обжалование штрафов</option>
+        </optgroup>
+        <optgroup label="📦 Маркетплейсы (WB, Ozon, Я.Маркет)">
+            <option value="mp-reviews">💬 Менеджер отзывов</option>
+            <option value="mp-seo">🚀 SEO-оптимизатор карточек</option>
+            <option value="mp-competitors">📊 Аналитик конкурентов</option>
+            <option value="mp-rich">📝 Rich-контент</option>
+        </optgroup>
+        <optgroup label="🏎️ Автомобили и техника">
+            <option value="auto-ads">🚘 Авто-объявления</option>
+            <option value="auto-bargain">🧠 Торг и Переговоры</option>
+            <option value="auto-parts">⚙️ Аналоги запчастей</option>
+        </optgroup>
+        <optgroup label="💼 Услуги и Бизнес">
+            <option value="biz-avito">🔨 Объявления для Авито</option>
+            <option value="biz-reels">🎬 Сценарии Reels/Shorts</option>
+            <option value="biz-resume">👔 Резюме под HeadHunter</option>
+        </optgroup>
+    </select>
+
+    <!-- Поле ввода (куда вставляется текст) -->
+    <textarea class="text-input" placeholder="Опишите вашу проблему выбранному ИИ..." id="user-prompt"></textarea>
+
+    <!-- МЕСТО ДЛЯ КНОПОК (Сюда JavaScript вставляет 4 кнопки) -->
+    <div class="quick-buttons-grid" id="dynamic-buttons-container"></div>
+
+    <!-- Главная кнопка отправки -->
+    <button class="main-submit-btn">
+        ➔ Консультация ИИ-Юриста
+    </button>
+</div>
+
+<script>
+// БАЗА ДАННЫХ КНОПОК ПОД КАЖДЫЙ ВАРИАНТ ВЫБОРА
+const buttonsData = {
+    '🛡️ Досудебные претензии': [
+        { icon: '⚖️', text: 'Судебный иск' },
+        { icon: '🏠', text: 'Затопление / ЖКХ' },
+        { icon: '🛒', text: 'Вернуть товар' },
+        { icon: '💼', text: 'Трудовой спор' }
+    ],
+    '📄 Договоры и Расписки': [
+        { icon: '🔑', text: 'Аренда квартиры' },
+        { icon: '🚘', text: 'Покупка машины' },
+        { icon: '📝', text: 'Проверить риски' },
+        { icon: '💰', text: 'Расписка в получении' }
+    ],
+    '🚨 Обжалование штрафов': [
+        { icon: '📸', text: 'Камера ГИБДД' },
+        { icon: '🅿️', text: 'Платная парковка' },
+        { icon: '🛑', text: 'Оспорить протокол' },
+        { icon: '📋', text: 'Снизить сумму' }
+    ],
+    '💬 Менеджер отзывов': [
+        { icon: '⭐️', text: 'Ответ на 5 звезд' },
+        { icon: '😡', text: 'Ответ на негатив' },
+        { icon: '❓', text: 'Консультация клиента' },
+        { icon: '🔥', text: 'Благодарность' }
+    ],
+    '🚀 SEO-оптимизатор карточек': [
+        { icon: '📈', text: 'Собрать ключи' },
+        { icon: '📝', text: 'Текст для Wildberries' },
+        { icon: '🛍️', text: 'Описание для Ozon' },
+        { icon: '🎯', text: 'Заголовок товара' }
+    ],
+    '📊 Аналитик конкурентов': [
+        { icon: '🔎', text: 'Поиск слабых мест' },
+        { icon: '💰', text: 'Анализ цен' },
+        { icon: '📦', text: 'Объемы продаж' },
+        { icon: '⭐', text: 'Разбор отзывов' }
+    ],
+    '📝 Rich-контент': [
+        { icon: '🖼️', text: 'План карточки' },
+        { icon: '✒️', text: 'Текст к блокам' },
+        { icon: '💡', text: 'Идеи инфографики' },
+        { icon: '📐', text: 'Структура контента' }
+    ],
+    '🚘 Авто-объявления': [
+        { icon: '💵', text: 'Быстрая продажа' },
+        { icon: '📋', text: 'Описание состояния' },
+        { icon: '✨', text: 'Красивый текст' },
+        { icon: '❌', text: 'Без обмена и торга' }
+    ],
+    '🧠 Торг и Переговоры': [
+        { icon: '📉', text: 'Сбить цену продавца' },
+        { icon: '🛡️', text: 'Защита от перекупа' },
+        { icon: '💬', text: 'Шаблон диалога' },
+        { icon: '🤝', text: 'Финальное согласие' }
+    ],
+    '⚙️ Аналоги запчастей': [
+        { icon: '🔧', text: 'Поиск дубликатов' },
+        { icon: '📜', text: 'Совместимость' },
+        { icon: '🏭', text: 'Лучшие бренды' },
+        { icon: '🔗', text: 'Кроссы артикулов' }
+    ],
+    '🔨 Объявления для Авито': [
+        { icon: '🔧', text: 'Авито Услуги' },
+        { icon: '🏠', text: 'Продажа личных вещей' },
+        { icon: '🚀', text: 'Оптимизация просмотров' },
+        { icon: '📞', text: 'Призыв к звонку' }
+    ],
+    '🎬 Сценарии Reels/Shorts': [
+        { icon: ' hook', text: 'Яркое начало (Хук)' },
+        { icon: '📝', text: 'Сценарий на 15 сек' },
+        { icon: '🔥', text: 'Вирусная идея' },
+        { icon: '🎬', text: 'Контент-план' }
+    ],
+    '👔 Резюме под HeadHunter': [
+        { icon: '💼', text: 'Опыт работы' },
+        { icon: '🧠', text: 'Ключевые навыки' },
+        { icon: '📝', text: 'Сопроводительное письмо' },
+        { icon: '🚀', text: 'Повысить отклики' }
+    ]
+};
+
+// ЛОГИКА ДИНАМИЧЕСКИХ КНОПОК
+function updateQuickButtons() {
+    const selectElement = document.getElementById('main-select');
+    const container = document.getElementById('dynamic-buttons-container');
+    
+    // Берем точный текст выбранного пункта
+    const selectedText = selectElement.options[selectElement.selectedIndex].text.trim();
+
+    // Очищаем старые кнопки
+    container.innerHTML = '';
+
+    // Подтягиваем новые кнопки из базы данных
+    const currentButtons = buttonsData[selectedText] || [];
+
+    // Создаем кнопки на лету
+    currentButtons.forEach(buttonInfo => {
+        const button = document.createElement('button');
+        button.className = 'quick-btn';
+        button.innerHTML = `<span>${buttonInfo.icon}</span> ${buttonInfo.text}`;
         
-        <!-- Официальная железная форма поиска, которая отправляет данные на google.ru -->
-        <form action="https://google.ru" method="GET" target="MSK_AI_Window" onsubmit="openCleanWindow()">
-            
-            <!-- Принудительно включаем русский язык и ИИ-режим (udm=50) -->
-            <input type="hidden" name="hl" value="ru">
-            <input type="hidden" name="udm" value="50">
-            
-            <div class="input-wrapper">
-                <!-- Сюда пользователь пишет свой вопрос -->
-                <input type="text" name="q" id="userQuery" placeholder="Опишите юридическую проблему..." required>
-            </div>
-            
-            <button type="submit" class="launch-btn">⚖️ Консультация ИИ-Юриста</button>
-        </form>
-    </div>
+        // Клик по кнопке вставляет её текст в поле ввода
+        button.onclick = function() {
+            document.getElementById('user-prompt').value = buttonInfo.text;
+        };
 
-    <script>
-        function openCleanWindow() {
-            // Добавляем к вопросу скрытый хвост-инструкцию, чтобы Google понял, что нужен Юрист
-            const input = document.getElementById('userQuery');
-            if (input && !input.value.includes("юрист")) {
-                input.value = "юрист " + input.value + " по законам РФ статьи кодексов пошагово";
-            }
+        container.appendChild(button);
+    });
+}
 
-            const width = 900;
-            const height = 650;
-            const left = (window.screen.width / 2) - (width / 2);
-            const top = (window.screen.height / 2) - (height / 2);
-            
-            // Заранее открываем чистое окно без адресной строки. Форма сама загрузит туда Google!
-            window.open(
-                "about:blank", 
-                "MSK_AI_Window", 
-                `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes,status=no,toolbar=no,menubar=no,location=no`
-            );
-        }
-    </script>
+// Запуск логики сразу при загрузке плагина
+document.addEventListener("DOMContentLoaded", function() {
+    updateQuickButtons();
+});
+</script>
+
 </body>
 </html>
