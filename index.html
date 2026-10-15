@@ -20,7 +20,7 @@
         h1 { color: #818cf8; font-size: 26px; font-weight: bold; margin-bottom: 5px; letter-spacing: 2px; text-shadow: 0 0 15px rgba(99,102,241,0.6); }
         .subtitle { color: #4f46e5; font-size: 13px; font-weight: 600; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
         
-        /* Удобный выпадающий список для выбора ИИ-модулей (вместо кучи ломающих кнопок) */
+        /* Удобный выпадающий список для выбора ИИ-модулей */
         .module-select {
             width: 100%;
             background: #1f2937;
@@ -36,7 +36,7 @@
             box-shadow: 0 0 10px rgba(67, 56, 202, 0.2);
         }
 
-        /* ТО САМОЕ ТЕКСТОВОЕ ОКНО, КОТОРОЕ ПРОПАЛО */
+        /* ТО САМОЕ ТЕКСТОВОЕ ОКНО */
         .input-box {
             background: rgba(31, 41, 55, 0.6);
             border: 2px solid #4338ca;
@@ -73,6 +73,36 @@
         .file-label:hover { transform: scale(1.15); }
         .file-status { font-size: 12px; color: #10b981; margin-top: -10px; margin-bottom: 15px; display: none; font-weight: 500; }
         
+        /* СТИЛИ ДЛЯ СЕТКИ С 4 НОВЫМИ КНОПКАМИ */
+        .quick-buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        .quick-btn {
+            background: rgba(31, 41, 55, 0.4);
+            border: 2px solid #4338ca;
+            border-radius: 12px;
+            padding: 12px 15px;
+            color: #f3f4f6;
+            font-size: 14px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+        }
+        .quick-btn:hover {
+            background: #1f2937;
+            border-color: #818cf8;
+            transform: translateY(-1px);
+            box-shadow: 0 0 10px rgba(129, 140, 248, 0.3);
+        }
+
         /* Фиолетовая кнопка запуска экспертизы */
         button.launch-btn {
             background: linear-gradient(135deg, #4f46e5, #7c3aed);
@@ -98,10 +128,10 @@
         <h1>MSK AI NETWORK</h1>
         <div class="subtitle">👑 Премиальный ИИ-Ассистент</div>
         
-        <!-- Красивое меню выбора роли: все 13 шпионов теперь здесь аккуратно и не мешают кнопкам -->
-        <select id="aiRole" class="module-select">
+        <!-- Выпадающий список с вызовом функции обновления кнопок -->
+        <select id="aiRole" class="module-select" onchange="updateQuickButtons()">
             <optgroup label="⚖️ Юриспруденция и Защита прав">
-                <option value="действуй строго по законам РФ. Составь грамотную досудебную претензию со ссылками на статьи кодексов">🛡️ Досудебные претензии</option>
+                <option value="действуй строго по законам РФ. Составь грамотную досудебную претензию со ссылками на статьи кодексов" selected>🛡️ Досудебные претензии</option>
                 <option value="сгенерируй юридически чистый договор купли-продажи (ДКП), договор аренды или расписку займа по законам РФ">📄 Договоры и Расписки</option>
                 <option value="сформулируй официальную жалобу в ГИБДД или суд для отмены штрафа с дорожной камеры">🚨 Обжалование штрафов</option>
             </optgroup>
@@ -138,25 +168,49 @@
             
             <div id="fileStatus" class="file-status">✓ Файл успешно прикреплен для ИИ-анализа</div>
             
+            <!-- 🎛️ КОНТЕЙНЕР ДЛЯ 4 ДИНАМИЧЕСКИХ КНОПОК -->
+            <div class="quick-buttons-grid" id="dynamic-buttons-container"></div>
+            
             <button type="submit" class="launch-btn">➔ Консультация ИИ-Юриста</button>
         </form>
     </div>
 
     <script>
-        // Функция склейки перед улетом в Google
-        function runAiExpertise() {
-            const inputField = document.getElementById('userQuery');
-            const roleSelect = document.getElementById('aiRole');
-            
-            if (inputField && roleSelect) {
-                let userQuestion = inputField.value.trim();
-                let selectedPrompt = roleSelect.value;
-                
-                // Склеиваем текст из окна с выбранным из списка промптом
-                inputField.value = userQuestion + " (выполни задачу как профессионал: " + selectedPrompt + ")";
-            }
-            return true; // Разрешаем запуск соседнего окна Google с ИИ
-        }
-    </script>
-</body>
-</html>
+        // База данных кнопок, привязанная к точному отображаемому тексту пунктов
+        const buttonsData = {
+            '🛡️ Досудебные претензии': [
+                { icon: '⚖️', text: 'Судебный иск' },
+                { icon: '🏠', text: 'Затопление / ЖКХ' },
+                { icon: '🛒', text: 'Вернуть товар' },
+                { icon: '💼', text: 'Трудовой спор' }
+            ],
+            '📄 Договоры и Расписки': [
+                { icon: '🔑', text: 'Аренда квартиры' },
+                { icon: '🚘', text: 'Покупка машины' },
+                { icon: '📝', text: 'Проверить риски' },
+                { icon: '💰', text: 'Расписка в получении' }
+            ],
+            '🚨 Обжалование штрафов': [
+                { icon: '📸', text: 'Камера ГИБДД' },
+                { icon: '🅿️', text: 'Платная парковка' },
+                { icon: '🛑', text: 'Оспорить протокол' },
+                { icon: '📋', text: 'Снизить сумму' }
+            ],
+            '💬 Менеджер отзывов': [
+                { icon: '⭐️', text: 'Ответ на 5 звезд' },
+                { icon: '😡', text: 'Ответ на негатив' },
+                { icon: '❓', text: 'Вопрос клиента' },
+                { icon: '🔥', text: 'Благодарность' }
+            ],
+            '🚀 SEO-оптимизатор карточек': [
+                { icon: '📈', text: 'Собрать ключи' },
+                { icon: '📦', text: 'Текст для WB' },
+                { icon: '🛍️', text: 'Текст для Ozon' },
+                { icon: '🎯', text: 'Заголовок товара' }
+            ],
+            '📊 Аналитик конкурентов': [
+                { icon: '🔎', text: 'Поиск слабых мест' },
+                { icon: '💰', text: 'Анализ цен' },
+                { icon: '📊', text: 'Объемы продаж' },
+                { icon: '⭐', text: 'Разбор отзывов' }
+            ],
