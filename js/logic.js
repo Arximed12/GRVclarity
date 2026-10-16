@@ -4,17 +4,32 @@ document.addEventListener("DOMContentLoaded", function() {
     const aiForm = document.getElementById('aiForm');
     const inputField = document.getElementById('userQuery');
 
-    // Адрес вашего личного облачного хранилища промптов на Vercel
-    const PROMPTS_URL = './data.json';
+    // Прямой относительный адрес к вашей единой базе данных на GitHub Pages
+    const DATA_URL = './data.json';
+    
+    // Внутренняя память сайта, куда запишется скачанный из сети data.json
+    let cloudData = {};
 
-    // Функция отрисовки 4 динамических кнопок
+    // Главная функция: за долю секунды скачивает всю базу кнопок и промптов из интернета
+    async function loadCloudData() {
+        try {
+            const response = await fetch(DATA_URL);
+            cloudData = await response.json();
+            // Как только данные прилетели из сети — мгновенно рисуем кнопки на экране!
+            updateQuickButtons();
+        } catch (error) {
+            console.error("Ошибка загрузки единой базы данных MSK AI:", error);
+        }
+    }
+
+    // Функция отрисовки 4 динамических кнопок на основе интернет-данных
     function updateQuickButtons() {
         if (!roleSelect || !container) return;
         const selectedText = roleSelect.options[roleSelect.selectedIndex].text.trim();
         container.innerHTML = '';
 
-        // Берем список кнопок из локального config.js
-        const currentButtons = buttonsConfig[selectedText] || [];
+        // Теперь берем список кнопок ПРЯМО из скачанного облачного архива cloudData
+        const currentButtons = cloudData[selectedText] || [];
         
         currentButtons.forEach(buttonInfo => {
             const button = document.createElement('button');
@@ -22,8 +37,8 @@ document.addEventListener("DOMContentLoaded", function() {
             button.className = 'quick-btn';
             button.innerHTML = `<span>${buttonInfo.icon}</span> ${buttonInfo.text}`;
             
-            // КЛИК ПО КНОПКЕ: Облачное скачивание, склейка и авто-отправка!
-            button.onclick = async function(e) {
+            // КЛИК ПО КНОПКЕ: Скрытая склейка облачного промпта и авто-отправка!
+            button.onclick = function(e) {
                 e.preventDefault(); 
 
                 if (!inputField || !aiForm) return;
@@ -36,21 +51,8 @@ document.addEventListener("DOMContentLoaded", function() {
                     return;
                 }
 
-                // Визуальный индикатор загрузки для премиального вида
-                const originalHTML = button.innerHTML;
-                button.innerHTML = `<span>⏳</span> Подготовка...`;
-                button.disabled = true;
-
-                let systemPrompt = "";
-
-                try {
-                    // Асинхронно скачиваем самый свежий защищенный промпт с вашего сервера
-                    const response = await fetch(PROMPTS_URL);
-                    const cloudPrompts = await response.json();
-                    systemPrompt = cloudPrompts[buttonInfo.text] || "";
-                } catch (error) {
-                    console.error("Ошибка получения промпта из облака:", error);
-                }
+                // Достаем скрытый промпт, который привязан к этой кнопке внутри data.json
+                let systemPrompt = buttonInfo.prompt || "";
                 
                 // Линия-маскировка, которая красиво прячет промпт за троеточие в чате
                 const lineSeparator = " — ".repeat(40);
@@ -62,13 +64,10 @@ document.addEventListener("DOMContentLoaded", function() {
                     inputField.value = `${userText} ${lineSeparator} [Настройка ИИ: ${mainRole} / Задача: ${buttonInfo.text}]`;
                 }
 
-                // Возвращаем кнопку в исходное состояние и отправляем форму
-                button.innerHTML = originalHTML;
-                button.disabled = false;
-
+                // Отправляем форму со скрытой склейкой в Google
                 aiForm.submit();
 
-                // Моментально очищаем поле ввода в самом плагине
+                // Моментально очищаем поле ввода в самом плагине, чтобы экран оставался чистым
                 setTimeout(() => {
                     inputField.value = '';
                 }, 100);
@@ -97,5 +96,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    updateQuickButtons();
+    // ЗАПУСК: при открытии сайта сразу включаем скачивание базы из сети
+    loadCloudData();
 });
