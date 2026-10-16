@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const inputField = document.getElementById('userQuery');
 
     // Адрес вашего личного облачного хранилища промптов на Vercel
-    const PROMPTS_URL = 'https://vercel.app';
+    const PROMPTS_URL = './data.json';
 
     // Функция отрисовки 4 динамических кнопок
     function updateQuickButtons() {
