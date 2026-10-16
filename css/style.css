@@ -1,0 +1,45 @@
+/* Общие стили для всего интерфейса */
+body { 
+    background: linear-gradient(135deg, #0b0f19, #111827); 
+    color: #f3f4f6; 
+    font-family: 'Segoe UI', system-ui, sans-serif; 
+    padding: 20px; 
+    margin: 0;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 250px;
+    height: 100vh;
+    overflow-x: hidden;
+}
+.wrapper { display: flex; flex-direction: column; align-items: center; text-align: center; height: 100%; width: 100%; }
+
+h1 { color: #818cf8; font-size: 24px; font-weight: bold; margin-bottom: 5px; letter-spacing: 2px; text-shadow: 0 0 15px rgba(99,102,241,0.6); }
+.subtitle { color: #4f46e5; font-size: 11px; font-weight: 600; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Выпадающий список */
+.module-select {
+    width: 100%; background: #1f2937; border: 2px solid #4338ca; color: #ffffff;
+    padding: 12px; border-radius: 12px; font-size: 14px; margin-bottom: 15px;
+    outline: none; cursor: pointer; font-weight: 600; box-shadow: 0 0 10px rgba(67, 56, 202, 0.2); box-sizing: border-box;
+}
+
+/* Поле ввода */
+.input-box {
+    background: rgba(31, 41, 55, 0.6); border: 2px solid #4338ca; border-radius: 16px;
+    padding: 12px; width: 100%; box-sizing: border-box; margin-bottom: 15px;
+    box-shadow: 0 0 15px rgba(67, 56, 202, 0.2); display: flex; align-items: center; gap: 10px;
+}
+input[type="text"] { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 16px; width: 100%; }
+input[type="text"]::placeholder { color: #6b7280; }
+
+/* Адаптивная сетка для 4 динамических кнопок */
+.quick-buttons-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;
+    width: 100%; margin-bottom: 15px; box-sizing: border-box;
+}
+.quick-btn {
+    background: rgba(31, 41, 55, 0.4); border: 2px solid #4338ca; border-radius: 12px;
+    padding: 10px 12px; color: #f3f4f6; font-size: 14px; text-align: left; cursor: pointer;
+    transition: all 0.2s ease; display: flex; align-items: center; gap: 8px; font-weight: 500; box-sizing: border-box;
+}
+.quick-btn:hover { background: #1f2937; border-color: #818cf8; transform: translateY(-1px); box-shadow: 0 0 10px rgba(129, 140, 248, 0.3); }
