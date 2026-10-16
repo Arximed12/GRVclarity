@@ -3,214 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <title>MSK AI NETWORK</title>
-    <style>
-        /* Премиальный темный дизайн, который у тебя работал */
-        body { 
-            background: linear-gradient(135deg, #0b0f19, #111827); 
-            color: #f3f4f6; 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            padding: 25px; 
-            margin: 0;
-            box-sizing: border-box;
-            min-width: 550px; 
-            height: 100vh;
-        }
-        .wrapper { display: flex; flex-direction: column; align-items: center; text-align: center; height: 100%; }
-        
-        h1 { color: #818cf8; font-size: 26px; font-weight: bold; margin-bottom: 5px; letter-spacing: 2px; text-shadow: 0 0 15px rgba(99,102,241,0.6); }
-        .subtitle { color: #4f46e5; font-size: 13px; font-weight: 600; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
-        
-        /* Удобный выпадающий список для выбора ИИ-модулей */
-        .module-select {
-            width: 100%;
-            background: #1f2937;
-            border: 2px solid #4338ca;
-            color: #ffffff;
-            padding: 12px;
-            border-radius: 12px;
-            font-size: 14px;
-            margin-bottom: 20px;
-            outline: none;
-            cursor: pointer;
-            font-weight: 600;
-            box-shadow: 0 0 10px rgba(67, 56, 202, 0.2);
-        }
-
-        /* ТО САМОЕ ТЕКСТОВОЕ ОКНО */
-        .input-box {
-            background: rgba(31, 41, 55, 0.6);
-            border: 2px solid #4338ca;
-            border-radius: 16px;
-            padding: 15px;
-            width: 100%;
-            box-sizing: border-box;
-            margin-bottom: 20px;
-            box-shadow: 0 0 15px rgba(67, 56, 202, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        input[type="text"] {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: white;
-            outline: none;
-            font-size: 16px;
-        }
-        input[type="text"]::placeholder { color: #6b7280; }
-        
-        /* ТА САМАЯ СКРЕПКА ДЛЯ ТЕЛЕФОНА И ПК */
-        .file-label {
-            color: #818cf8;
-            font-size: 22px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            user-select: none;
-            display: flex;
-            align-items: center;
-        }
-        .file-label:hover { transform: scale(1.15); }
-        .file-status { font-size: 12px; color: #10b981; margin-top: -10px; margin-bottom: 15px; display: none; font-weight: 500; }
-        
-        /* СТИЛИ ДЛЯ СЕТКИ С 4 НОВЫМИ КНОПКАМИ */
-        .quick-buttons-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        .quick-btn {
-            background: rgba(31, 41, 55, 0.4);
-            border: 2px solid #4338ca;
-            border-radius: 12px;
-            padding: 12px 15px;
-            color: #f3f4f6;
-            font-size: 14px;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 500;
-        }
-        .quick-btn:hover {
-            background: #1f2937;
-            border-color: #818cf8;
-            transform: translateY(-1px);
-            box-shadow: 0 0 10px rgba(129, 140, 248, 0.3);
-        }
-
-        /* Фиолетовая кнопка запуска экспертизы */
-        button.launch-btn {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
-            border: none;
-            padding: 16px 40px;
-            border-radius: 50px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-            box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
-            transition: all 0.3s;
-        }
-        button.launch-btn:hover { 
-            transform: scale(1.02);
-            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.6);
-        }
-    </style>
+    <!-- Подключаем наш общий файл стилей -->
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="wrapper">
         <h1>MSK AI NETWORK</h1>
         <div class="subtitle">👑 Премиальный ИИ-Ассистент</div>
         
-        <!-- Выпадающий список с вызовом функции обновления кнопок -->
-        <select id="aiRole" class="module-select" onchange="updateQuickButtons()">
-            <optgroup label="⚖️ Юриспруденция и Защита прав">
-                <option value="действуй строго по законам РФ. Составь грамотную досудебную претензию со ссылками на статьи кодексов" selected>🛡️ Досудебные претензии</option>
-                <option value="сгенерируй юридически чистый договор купли-продажи (ДКП), договор аренды или расписку займа по законам РФ">📄 Договоры и Расписки</option>
-                <option value="сформулируй официальную жалобу в ГИБДД или суд для отмены штрафа с дорожной камеры">🚨 Обжалование штрафов</option>
-            </optgroup>
-            <optgroup label="📦 Маркетплейсы (WB, Ozon, Я.Маркет)">
-                <option value="ответь на отзыв маркетплейса, будь вежлив, сгладь негатив и незаметно прорекламируй другие товары селлера">💬 Менеджер отзывов</option>
-                <option value="напиши продающее SEO-оптимизированное описание товара для Wildberries, забитое ключевыми поисковыми запросами в топ">🚀 SEO-оптимизатор карточек</option>
-                <option value="изучи плохие отзывы на товар конкурентов, выяви их критические минусы и составь отчет как превзойти их">📊 Аналитик конкурентов</option>
-                <option value="разработай детальную структуру текстовых блоков и ТЗ для Rich-контента на Ozon">📝 Rich-контент</option>
-            </optgroup>
-            <optgroup label="🚗 Автомобили и техника">
-                <option value="преврати факты об автомобиле в честное, продающее и цепляющее объявление для Авито и Дром">🚘 Авто-объявления</option>
-                <option value="проанализируй диалог с продавцом машины, найди признаки скрытого перекупа, уловки и напиши фразы для торга">🧠 Торг и Переговоры</option>
-                <option value="проанализируй рынок деталей, посоветуй надежные и проверенные китайские бренды-дубликаты запчастей">⚙️ Аналоги запчастей</option>
-            </optgroup>
-            <optgroup label="💼 Услуги и Бизнес">
-                <option value="напиши мощное продающее объявление для Авито в сфере услуг, оптимизированное под алгоритмы выдачи">🔨 Объявления для Авито</option>
-                <option value="напиши вирусный сценарий для короткого видео Reels/Shorts: мощный хук в первые 3 секунды, текст и призыв">🎬 Сценарии Reels/Shorts</option>
-                <option value="структурируй опыт работы в солидное, презентабельное резюме высшего уровня для HeadHunter">👔 Резюме под HeadHunter</option>
-            </optgroup>
+        <!-- Категории, которые строго совпадают с кнопками в config.js -->
+        <select id="aiRole" class="module-select">
+            <option value="действуй строго по законам РФ как высококвалифицированный юрист." selected>⚖️ Юриспруденция и Защита прав</option>
+            <option value="действуй как эксперт по маркетплейсам Wildberries, Ozon и Яндекс.Маркет.">📦 Маркетплейсы (WB, Ozon, Я.Маркет)</option>
+            <option value="действуй как автоэксперт, мастер по подбору машин и специалист по автотехнике.">🚗 Автомобили и техника</option>
+            <option value="действуй как профессиональный маркетолог, копирайтер и бизнес-консультант.">💼 Услуги и Бизнес</option>
         </select>
 
-        <!-- НАШЕ ВЕРНУВШЕЕСЯ ТЕКСТОВОЕ ОКНО С ФОРМОЙ -->
-        <form action="https://google.ru" method="GET" target="_blank" onsubmit="return runAiExpertise();" style="width: 100%;">
+        <form action="https://google.ru" method="GET" target="_blank" id="aiForm" style="width: 100%;">
             <input type="hidden" name="hl" value="ru">
             <input type="hidden" name="udm" value="50">
             
             <div class="input-box">
-                <!-- Нативный выбор файлов для камеры телефона и ПК -->
-                <input type="file" id="doc-file" accept="image/*" style="display: none;" onchange="document.getElementById('fileStatus').style.display='block'">
-                <label for="doc-file" class="file-label" title="Прикрепить изображение">📎</label>
-                
-                <input type="text" name="q" id="userQuery" placeholder="Опишите вашу проблему выбранному ИИ..." required>
+                <!-- Скрепку убрали, осталась чистая строка коммерческого стандарта -->
+                <input type="text" name="q" id="userQuery" placeholder="Опишите вашу проблему или выберите вопрос ниже..." required>
             </div>
             
-            <div id="fileStatus" class="file-status">✓ Файл успешно прикреплен для ИИ-анализа</div>
-            
-            <!-- 🎛️ КОНТЕЙНЕР ДЛЯ 4 ДИНАМИЧЕСКИХ КНОПОК -->
+            <!-- Сюда наш движок теперь будет красиво выводить 4 кнопки с вопросами -->
             <div class="quick-buttons-grid" id="dynamic-buttons-container"></div>
-            
-            <button type="submit" class="launch-btn">➔ Консультация ИИ-Юриста</button>
         </form>
     </div>
-
-    <script>
-        // База данных кнопок, привязанная к точному отображаемому тексту пунктов
-        const buttonsData = {
-            '🛡️ Досудебные претензии': [
-                { icon: '⚖️', text: 'Судебный иск' },
-                { icon: '🏠', text: 'Затопление / ЖКХ' },
-                { icon: '🛒', text: 'Вернуть товар' },
-                { icon: '💼', text: 'Трудовой спор' }
-            ],
-            '📄 Договоры и Расписки': [
-                { icon: '🔑', text: 'Аренда квартиры' },
-                { icon: '🚘', text: 'Покупка машины' },
-                { icon: '📝', text: 'Проверить риски' },
-                { icon: '💰', text: 'Расписка в получении' }
-            ],
-            '🚨 Обжалование штрафов': [
-                { icon: '📸', text: 'Камера ГИБДД' },
-                { icon: '🅿️', text: 'Платная парковка' },
-                { icon: '🛑', text: 'Оспорить протокол' },
-                { icon: '📋', text: 'Снизить сумму' }
-            ],
-            '💬 Менеджер отзывов': [
-                { icon: '⭐️', text: 'Ответ на 5 звезд' },
-                { icon: '😡', text: 'Ответ на негатив' },
-                { icon: '❓', text: 'Вопрос клиента' },
-                { icon: '🔥', text: 'Благодарность' }
-            ],
-            '🚀 SEO-оптимизатор карточек': [
-                { icon: '📈', text: 'Собрать ключи' },
-                { icon: '📦', text: 'Текст для WB' },
-                { icon: '🛍️', text: 'Текст для Ozon' },
-                { icon: '🎯', text: 'Заголовок товара' }
-            ],
-            '📊 Аналитик конкурентов': [
-                { icon: '🔎', text: 'Поиск слабых мест' },
-                { icon: '💰', text: 'Анализ цен' },
-                { icon: '📊', text: 'Объемы продаж' },
-                { icon: '⭐', text: 'Разбор отзывов' }
-            ],
+    
+    <!-- Подключаем внешние скрипты -->
+    <script src="js/config.js"></script>
+    <script src="js/logic.js"></script>
+</body>
+</html>
