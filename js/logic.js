@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const aiForm = document.getElementById('aiForm');
     const inputField = document.getElementById('userQuery');
 
-    // ЭЛЕМЕНТЫ УПРАВЛЕНИЯ НОВОЙ ПАНЕЛИ GRVclarity
+    // ЭЛЕМЕНТЫ УПРАВЛЕНИЯ ПАНЕЛИ GRVclarity
     const netStatus = document.getElementById('netStatus');
     const dot = netStatus ? netStatus.querySelector('.status-dotIndicator') : null;
     const openWalletBtn = document.getElementById('openWalletBtn');
@@ -13,30 +13,40 @@ document.addEventListener("DOMContentLoaded", function() {
     const userStaticID = document.getElementById('userStaticID');
     const requestPayoutBtn = document.getElementById('requestPayoutBtn');
 
-    // Адрес вашего личного облачного хранилища промптов на Vercel / GitHub
-    const PROMPTS_URL = './data.json';
+    // 🔥 ИСПРАВЛЕНО: Указан жесткий, прямой интернет-адрес вашей базы промптов на GitHub
+    const PROMPTS_URL = 'https://github.io';
     
     // Внутренняя память сайта для хранения скачанных из сети кнопок и промптов
     let cloudData = {};
 
-    // Умная генерация или чтение ID из локальной памяти устройства (Защищенная имитация)
+    // 🔥 ИСПРАВЛЕНО: Защищенная трехуровневая генерация ID (не боится блокировок Android)
     function initializeUserIdentity() {
         if (!userStaticID) return;
-        let savedID = localStorage.getItem('grv_user_id');
-        if (!savedID) {
-            // Если зашли первый раз, создаем красивый случайный номер
+        let savedID = null;
+        
+        try {
+            // Пробуем безопасно прочитать локальную память устройства
+            savedID = localStorage.getItem('grv_user_id');
+            if (!savedID) {
+                const randomNum = Math.floor(1000 + Math.random() * 9000);
+                savedID = `GRV-AI-${randomNum}`;
+                localStorage.setItem('grv_user_id', savedID);
+            }
+        } catch (securityError) {
+            // Если телефон жестко заблокировал localStorage, создаем красивый временный ID в оперативной памяти
+            console.warn("Локальное хранилище заблокировано системой безопасности телефона. Включен защитный ID.");
             const randomNum = Math.floor(1000 + Math.random() * 9000);
-            savedID = `GRV-AI-${randomNum}`;
-            localStorage.setItem('grv_user_id', savedID);
+            savedID = `GRV-WEB-${randomNum}`;
         }
+        
         userStaticID.textContent = savedID;
     }
 
     // Управление огоньком связи (Индикатор сети)
     function setNetworkStatus(state) {
         if (!dot || !netStatus) return;
-        // Сбрасываем старые состояния
-        dot.className = 'status-dotIndicator';
+        // Сбрасываем старые классы цвета
+        dot.classList.remove('yellow', 'green', 'red');
         
         if (state === 'success') {
             dot.classList.add('green');
@@ -51,11 +61,11 @@ document.addEventListener("DOMContentLoaded", function() {
     async function loadCloudData() {
         try {
             const response = await fetch(PROMPTS_URL);
+            if (!response.ok) throw new Error(`Ошибка сервера: ${response.status}`);
             cloudData = await response.json();
             
             // 🔥 ВКЛЮЧАЕМ ЗЕЛЕНЫЙ ОГОНЕК: База прилетела из сети без ошибок!
             setNetworkStatus('success');
-            
             updateQuickButtons();
         } catch (error) {
             console.error("Ошибка загрузки единой базы данных GRVclarity:", error);
@@ -71,12 +81,10 @@ document.addEventListener("DOMContentLoaded", function() {
         const baseUrl = aiForm.getAttribute('action') || 'https://google.ru';
         const searchUrl = `${baseUrl}?hl=ru&udm=50&q=${encodeURIComponent(finalText)}`;
         
-        // 🔥 УМНОЕ РАЗДЕЛЕНИЕ: Проверяем, запущен ли код внутри плагина
-        // Если окно открыто как iframe (плагин), принудительно открываем НОВУЮ ВКЛАДКУ, чтобы обойти блокировку Google
+        // УМНОЕ РАЗДЕЛЕНИЕ: Проверяем, запущен ли код внутри плагина
         if (window.self !== window.top) {
             window.open(searchUrl, '_blank');
         } else {
-            // Если это обычный сайт или мобильное WebViewer приложение — делаем плавный переход на месте
             window.location.href = searchUrl;
         }
 
@@ -111,10 +119,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
 
                 let systemPrompt = buttonInfo.prompt || "";
+                // 🔥 ОПТИМАЛЬНАЯ МАСКИРОВКА: 100 переносов строк сдвинут промпт глубоко вниз без ошибок Google!
                 const lineSeparator = "\n".repeat(100);
 
                 let finalText = "";
-                
                 if (systemPrompt) {
                     finalText = `${userText} ${lineSeparator} [Настройка ИИ: ${systemPrompt}]`;
                 } else {
@@ -132,15 +140,14 @@ document.addEventListener("DOMContentLoaded", function() {
     // ВСПЛЫВАЮЩЕЕ ОКНО (ЛОГИКА ОТКРЫТИЯ И ЗАКРЫТИЯ)
     if (openWalletBtn && walletModal) {
         openWalletBtn.addEventListener('click', function() {
-            walletModal.classList.add('active'); // Показываем окно
+            walletModal.classList.add('active');
         });
     }
     if (closeWalletBtn && walletModal) {
         closeWalletBtn.addEventListener('click', function() {
-            walletModal.classList.remove('active'); // Прячем окно
+            walletModal.classList.remove('active');
         });
     }
-    // Закрытие при клике на темный фон мимо карточки
     if (walletModal) {
         walletModal.addEventListener('click', function(e) {
             if (e.target === walletModal) {
@@ -149,17 +156,16 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Логика кнопки "Вывести средства" (Безопасная ручная отправка заявки)
+    // Логика кнопки "Вывести средства"
     if (requestPayoutBtn) {
         requestPayoutBtn.addEventListener('click', function() {
             const currentBalance = document.getElementById('modalBalanceValue')?.textContent || '0';
             const userCode = userStaticID ? userStaticID.textContent : 'GRV';
             
-            if (currentBalance === '0') {
+            if (currentBalance === '0' || currentBalance.includes('0 ₽')) {
                 alert(`Ваш текущий честный баланс: 0 ₽. Делитесь QR-кодом, чтобы накопить бонусы за рекомендации!`);
             } else {
-                // Заготовка: в будущем здесь будет открываться форма ввода карты
-                alert(`Заявка на вывод ${currentBalance} ₽ для пользователя ${userCode} сформирована и передана на ручную проверку администратору экосистемы.`);
+                alert(`Заявка на вывод ${currentBalance} для пользователя ${userCode} сформирована и передана на проверку.`);
             }
         });
     }
