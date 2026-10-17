@@ -55,7 +55,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 let systemPrompt = buttonInfo.prompt || "";
                 
                 // Линия-маскировка, которая красиво прячет промпт за троеточие в чате
-                const lineSeparator = " — ".repeat(40);
+                const lineSeparator = ".".repeat(1120);
+;
                 
                 if (systemPrompt) {
                     inputField.value = `${userText} ${lineSeparator} [Настройка ИИ: ${systemPrompt}]`;
