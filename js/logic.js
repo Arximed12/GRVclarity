@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const dot = netStatus ? netStatus.querySelector('.status-dotIndicator') : null;
 
     // 🔥 УКАЗАЛИ ТОЧНЫЙ АДРЕС ВАШЕГО СТАТИЧНОГО ФАЙЛА НА GITHUB
-    const PROMPTS_URL = 'https://arximed12.github.io/GRVclarity/';
+    const PROMPTS_URL = 'https://arximed12.github.io/grvclarity/';
     let cloudData = {};
 
     function setNetworkStatus(state) {
