@@ -8,15 +8,13 @@ document.addEventListener("DOMContentLoaded", function() {
     const netStatus = document.getElementById('netStatus');
     const dot = netStatus ? netStatus.querySelector('.status-dotIndicator') : null;
 
-    // 🔥 УНИВЕРСАЛЬНЫЙ АДРЕС: Стабильно находит базу data.json на сайте, в плагине и на смартфонах
-    const PROMPTS_URL = window.location.origin + window.location.pathname.replace(/[^\/]*$/, '') + 'data.json';
-
+    // 🔥 УКАЗАЛИ ТОЧНЫЙ АДРЕС ВАШЕГО СТАТИЧНОГО ФАЙЛА НА GITHUB
+    const PROMPTS_URL = 'https://arximed12.github.io/GRVclarity/';
     let cloudData = {};
 
-    // Управление огоньком связи (Индикатор сети)
     function setNetworkStatus(state) {
         if (!dot || !netStatus) return;
-        dot.className = 'status-dotIndicator'; // Сброс классов цвета
+        dot.className = 'status-dotIndicator'; // Сброс
         if (state === 'success') {
             dot.classList.add('green');
             netStatus.setAttribute('title', 'Статус сети: База промптов успешно загружена');
@@ -26,20 +24,18 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // Функция, которая скачивает всю базу из интернета при старте
     async function loadCloudData() {
         try {
             const response = await fetch(PROMPTS_URL);
             cloudData = await response.json();
-            setNetworkStatus('success'); // Зажигаем зеленый огонек сети
+            setNetworkStatus('success'); // Зажигаем зеленый огонек!
             updateQuickButtons();
         } catch (error) {
             console.error("Ошибка загрузки единой базы данных GRVclarity:", error);
-            setNetworkStatus('error'); // Зажигаем красный огонек сбоя
+            setNetworkStatus('error'); // Зажигаем красный огонек
         }
     }
 
-    // Вспомогательная функция для безопасного перехода по ссылке
     function sendRequestToGoogle(finalText) {
         if (!aiForm) return;
         const baseUrl = aiForm.getAttribute('action') || 'https://google.ru';
@@ -56,7 +52,6 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 100);
     }
 
-    // Ваша оригинальная функция отрисовки 4 динамических кнопок с защитой эмодзи
     function updateQuickButtons() {
         if (!roleSelect || !container) return;
         const selectedText = roleSelect.options[roleSelect.selectedIndex].text.trim();
@@ -64,7 +59,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
         let currentButtons = cloudData[selectedText];
         
-        // Хак-защита от разницы текстовых символов эмодзи весов/коробок в файле data.json
         if (!currentButtons) {
             const keys = Object.keys(cloudData);
             const cleanText = selectedText.replace(/[^а-яа-ёа-зй-шы-ъе-я\s]/gi, '').trim();
@@ -89,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
 
                 let systemPrompt = buttonInfo.prompt || "";
-                const lineSeparator = ".".repeat(120); // Оптимальная маскировка точками
+                const lineSeparator = ".".repeat(120);
                 let finalText = "";
                 
                 if (systemPrompt) {
@@ -121,6 +115,5 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // ЗАПУСК ДВИЖКА
     loadCloudData();
 });
