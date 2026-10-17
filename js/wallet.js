@@ -1,12 +1,11 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Подключаем кнопки кошелька строго по вашим новым стилям
     const openWalletBtn = document.getElementById('openWalletBtn');
     const closeWalletBtn = document.getElementById('closeWalletBtn');
     const walletModal = document.getElementById('walletModal');
     const userStaticID = document.getElementById('userStaticID');
     const requestPayoutBtn = document.getElementById('requestPayoutBtn');
 
-    // ТРЁХУРОВНЕВАЯ ЗАЩИТА ID: Спасает от зависания «ID: Загрузка...» на телефонах
+    // Безопасная генерация ID пользователя (не боится блокировок Android)
     function initializeUserIdentity() {
         if (!userStaticID) return;
         let savedID = null;
@@ -17,15 +16,14 @@ document.addEventListener("DOMContentLoaded", function() {
                 savedID = `GRV-AI-${randomNum}`;
                 localStorage.setItem('grv_user_id', savedID);
             }
-        } catch (securityError) {
-            // Если Android заблокировал память, создаем красивый ID в оперативной памяти
+        } catch (e) {
             const randomNum = Math.floor(1000 + Math.random() * 9000);
             savedID = `GRV-WEB-${randomNum}`;
         }
         userStaticID.textContent = savedID;
     }
 
-    // Логика плавного вылета и скрытия модального окна кошелька
+    // Открытие и закрытие окна кошелька по клику
     if (openWalletBtn && walletModal) {
         openWalletBtn.addEventListener('click', function() {
             walletModal.classList.add('active');
@@ -39,12 +37,12 @@ document.addEventListener("DOMContentLoaded", function() {
     if (walletModal) {
         walletModal.addEventListener('click', function(e) {
             if (e.target === walletModal) {
-                walletModal.classList.remove('active'); // Клик по темному фону мимо карты
+                walletModal.classList.remove('active');
             }
         });
     }
 
-    // Обработка кнопки вывода средств
+    // Логика кнопки "Вывести средства"
     if (requestPayoutBtn) {
         requestPayoutBtn.addEventListener('click', function() {
             const currentBalance = document.getElementById('modalBalanceValue')?.textContent || '0';
@@ -53,11 +51,11 @@ document.addEventListener("DOMContentLoaded", function() {
             if (currentBalance === '0' || currentBalance.includes('0 ₽')) {
                 alert(`Ваш текущий честный баланс: 0 ₽. Делитесь QR-кодом, чтобы накопить бонусы за рекомендации!`);
             } else {
-                alert(`Заявка на вывод ${currentBalance} для пользователя ${userCode} сформирована и передана на проверку администратору.`);
+                alert(`Заявка на вывод ${currentBalance} для пользователя ${userCode} сформирована и передана на проверку.`);
             }
         });
     }
 
-    // Авто-запуск личного кабинета
+    // Запускаем личный кабинет
     initializeUserIdentity();
 });
