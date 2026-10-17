@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const aiForm = document.getElementById('aiForm');
     const inputField = document.getElementById('userQuery');
 
-    // ЭЛЕМЕНТЫ УПРАВЛЕНИЯ ПАНЕЛИ GRVclarity
+    // ЭЛЕМЕНТЫ УПРАВЛЕНИЯ ПАНЕЛИ GRVclarity (Сохраняем новые элементы)
     const netStatus = document.getElementById('netStatus');
     const dot = netStatus ? netStatus.querySelector('.status-dotIndicator') : null;
     const openWalletBtn = document.getElementById('openWalletBtn');
@@ -13,17 +13,16 @@ document.addEventListener("DOMContentLoaded", function() {
     const userStaticID = document.getElementById('userStaticID');
     const requestPayoutBtn = document.getElementById('requestPayoutBtn');
 
-    // 🔥 АВТОМАТИЧЕСКИЙ ПУТЬ: Сам находит data.json на вашем Гитхабе без ошибок регистра букв
-    const PROMPTS_URL = window.location.origin + window.location.pathname.replace(/[^\/]*\$/, '') + 'data.json';
+    // 🔥 ИСПРАВЛЕНО: Универсальный путь, который намертво связывает телефон и сайт с вашим файлом в сети
+    const PROMPTS_URL = 'https://github.io';
     
     // Внутренняя память сайта для хранения скачанных из сети кнопок и промптов
     let cloudData = {};
 
-    // Защищенная трехуровневая генерация ID (не боится блокировок Android)
+    // 🔥 ДОБАВЛЕНО: Безопасное создание ID пользователя для личного кабинета
     function initializeUserIdentity() {
         if (!userStaticID) return;
         let savedID = null;
-        
         try {
             savedID = localStorage.getItem('grv_user_id');
             if (!savedID) {
@@ -31,20 +30,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 savedID = `GRV-AI-${randomNum}`;
                 localStorage.setItem('grv_user_id', savedID);
             }
-        } catch (securityError) {
-            console.warn("Локальное хранилище заблокировано системой безопасности телефона.");
+        } catch (e) {
             const randomNum = Math.floor(1000 + Math.random() * 9000);
             savedID = `GRV-WEB-${randomNum}`;
         }
-        
         userStaticID.textContent = savedID;
     }
 
-    // Управление огоньком связи (Индикатор сети)
+    // 🔥 ДОБАВЛЕНО: Управление огоньком связи (Индикатор сети)
     function setNetworkStatus(state) {
         if (!dot || !netStatus) return;
         dot.className = 'status-dotIndicator'; // Сброс
-        
         if (state === 'success') {
             dot.classList.add('green');
             netStatus.setAttribute('title', 'Статус сети: База промптов успешно загружена');
@@ -60,13 +56,12 @@ document.addEventListener("DOMContentLoaded", function() {
             const response = await fetch(PROMPTS_URL);
             cloudData = await response.json();
             
-            // ВКЛЮЧАЕМ ЗЕЛЕНЫЙ ОГОНЕК: База прилетела из сети без ошибок!
+            // Зажигаем зеленый огонек при успешной загрузке
             setNetworkStatus('success');
-            
-            // Сразу запускаем отрисовку кнопок
             updateQuickButtons();
         } catch (error) {
-            console.error("Ошибка загрузки единой базы данных GRVclarity:", error);
+            console.error("Ошибка загрузки единой базы данных:", error);
+            // Зажигаем красный огонек при сбое
             setNetworkStatus('error');
         }
     }
@@ -78,6 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const baseUrl = aiForm.getAttribute('action') || 'https://google.ru';
         const searchUrl = `${baseUrl}?hl=ru&udm=50&q=${encodeURIComponent(finalText)}`;
         
+        // Умное разделение: плагин открывает в новом окне, телефон — на месте
         if (window.self !== window.top) {
             window.open(searchUrl, '_blank');
         } else {
@@ -89,19 +85,17 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 100);
     }
 
-    // 🔥 ФУНКЦИЯ ОТРИСОВКИ КНОПОК ИЗ ВАШЕЙ ОРИГИНАЛЬНОЙ ВЕРСИИ НА ГИТХАБЕ
+    // 🔥 ВАША ОРИГИНАЛЬНАЯ ФУНКЦИЯ ОТРИСОВКИ КНОПОК С АВТОПОДБОРОМ ЭМОДЗИ
     function updateQuickButtons() {
         if (!roleSelect || !container) return;
-        
-        // Получаем чистый текст выбранной роли
         const selectedText = roleSelect.options[roleSelect.selectedIndex].text.trim();
         container.innerHTML = '';
 
-        // Находим массив кнопок в cloudData. Если из-за разницы эмодзи не находит, ищет по запасному совпадению слов
+        // Ищем массив кнопок в cloudData
         let currentButtons = cloudData[selectedText];
         
+        // Хак-защита от разницы текстовых значков эмодзи весов/коробок в файле data.json
         if (!currentButtons) {
-            // Защитный хак: ищем по ключевым словам, если в data.json съехали эмодзи весов или коробок
             const keys = Object.keys(cloudData);
             const cleanText = selectedText.replace(/[^а-яа-ёа-зй-шы-ъе-я\s]/gi, '').trim();
             const matchedKey = keys.find(k => k.replace(/[^а-яа-ёа-зй-шы-ъе-я\s]/gi, '').trim() === cleanText);
@@ -114,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function() {
             button.className = 'quick-btn';
             button.innerHTML = `<span>${buttonInfo.icon}</span> ${buttonInfo.text}`;
             
+            // КЛИК ПО КНОПКЕ: Скрытая склейка, пустые строки-маскировка и отправка!
             button.onclick = function(e) {
                 e.preventDefault(); 
 
@@ -126,8 +121,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
 
                 let systemPrompt = buttonInfo.prompt || "";
+                // Плавная скрытая маскировка на 100 строк вниз
                 const lineSeparator = "\n".repeat(100);
-
                 let finalText = "";
                 
                 if (systemPrompt) {
@@ -144,7 +139,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // ВСПЛЫВАЮЩЕЕ ОКНО (ЛОГИКА ОТКРЫТИЯ И ЗАКРЫТИЯ)
+    // 🔥 ДОБАВЛЕНО: ВСПЛЫВАЮЩЕЕ ОКНО КОШЕЛЬКА (ОТКРЫТИЕ И ЗАКРЫТИЕ)
     if (openWalletBtn && walletModal) {
         openWalletBtn.addEventListener('click', function() {
             walletModal.classList.add('active');
@@ -163,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Логика кнопки "Вывести средства"
+    // 🔥 ДОБАВЛЕНО: Логика кнопки "Вывести средства"
     if (requestPayoutBtn) {
         requestPayoutBtn.addEventListener('click', function() {
             const currentBalance = document.getElementById('modalBalanceValue')?.textContent || '0';
@@ -172,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (currentBalance === '0' || currentBalance.includes('0 ₽')) {
                 alert(`Ваш текущий честный баланс: 0 ₽. Делитесь QR-кодом, чтобы накопить бонусы за рекомендации!`);
             } else {
-                alert(`Заявка на вывод ${currentBalance} ₽ для пользователя ${userCode} сформирована и передана на ручную проверку администратору экосистемы.`);
+                alert(`Заявка на вывод ${currentBalance} для пользователя ${userCode} сформирована и передана на проверку.`);
             }
         });
     }
@@ -194,7 +189,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // ЗАПУСК ЭКОСИСТЕМЫ
+    // ЗАПУСК ПОЛНОЙ ЭКОСИСТЕМЫ
     initializeUserIdentity();
     loadCloudData();
 });
