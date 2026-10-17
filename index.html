@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>GRVclarity - ИИ Ассистент</title>
-    <!-- Жесткая защита от мобильной лупы плюс-минус и масштабирования на смартфонах -->
+    <!-- Жесткая коммерческая маскировка: наглухо убирает серые кнопки плюс-минус и лупу масштабирования на телефонах -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- Подключаем наш общий премиальный файл стилей бренда -->
+    <!-- Подключаем наш общий премиальный файл стилей бренда GRV -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -13,11 +13,11 @@
         <!-- ВЕРХНЯЯ СЛУЖЕБНАЯ ПАНЕЛЬ СЕТИ GRV -->
         <div class="top-status-bar">
             <div class="network-status" id="netStatus" title="Статус сети: Проверка подключения...">
-                <!-- Сюда скрипт logic.js будет выводить зеленый или красный огонек -->
+                <!-- Сюда наш монолитный logic.js выведет красивый зеленый или красный неоновый огонек -->
                 <span class="status-dotIndicator yellow"></span>
                 <span class="status-textLabel">Сеть</span>
             </div>
-            <!-- Наша кнопка баланса (id совпадает с wallet.js) -->
+            <!-- Наша кнопка баланса (id строго совпадает с элементами в logic.js) -->
             <button class="balance-badge" id="openWalletBtn">👛 0 ₽</button>
         </div>
 
@@ -27,11 +27,11 @@
         <h1>GRVclarity</h1>
         <div class="subtitle">👑 Премиальный ИИ-Ассистент</div>
         
-        <!-- Категории ИИ-ролей, которые строго совпадают с кнопками в data.json -->
+        <!-- Категории ИИ-ролей, которые символ в символ совпадают со списками в data.json -->
         <select id="aiRole" class="module-select">
             <option value="действуй строго по законам РФ как высококвалифицированный юрист." selected>⚖️ Юриспруденция и Защита прав</option>
             <option value="действуй как эксперт по маркетплейсам Wildberries, Ozon и Яндекс.Маркет.">📦 Маркетплейсы (WB, Ozon, Я.Маркет)</option>
-            <option value="действуй как автоэксперт, мастер по подбору машин и specialist по автотехнике.">🚗 Автомобили и техника</option>
+            <option value="действуй как автоэксперт, мастер по подбору машин и специалист по автотехнике.">🚗 Автомобили и техника</option>
             <option value="действуй как профессиональный маркетолог, копирайтер и бизнес-консультант.">💼 Услуги и Бизнес</option>
         </select>
 
@@ -41,21 +41,23 @@
             <input type="hidden" name="udm" value="50">
             
             <div class="input-box">
-                <!-- Само поле ввода также защищено от выпадающих белых списков браузера -->
+                <!-- Текстовое поле ввода полностью прозрачное и защищено от выпадающих белых списков браузера -->
                 <input type="text" name="q" id="userQuery" placeholder="Опишите вашу проблему или выберите вопрос ниже..." required autocomplete="off">
+                <!-- Наша синяя круглая кнопочка со стрелочкой из Авито/Телеграма -->
                 <button type="submit" class="send-mini-btn" title="Отправить запрос">➔</button>
             </div>
             
-            <!-- Сюда наш движок logic.js будет выводить 4 динамические фиолетовые кнопки -->
+            <!-- Сюда наш движок logic.js красиво выставит 4 динамические кнопки из интернета -->
             <div class="quick-buttons-grid" id="dynamic-buttons-container"></div>
         </form>
     </div>
 
-    <!-- ВСПЛЫВАЮЩЕЕ МОДАЛЬНОЕ ОКНО КОШЕЛЬКА (id совпадает с wallet.js) -->
+    <!-- ВСПЛЫВАЮЩЕЕ МОДАЛЬНОЕ ОКНО КОШЕЛЬКА (ЛИЧНЫЙ КАБИНЕТ) -->
     <div class="modal-overlay" id="walletModal">
         <div class="modal-content-card">
             <button class="modal-close-xBtn" id="closeWalletBtn">✕</button>
             <h3 class="modal-title">Личный кабинет GRV</h3>
+            <!-- Вместо слова "Загрузка..." скрипт вставит уникальный сгенерированный ID пользователя -->
             <div class="user-id-badge">ID: <span id="userStaticID">Загрузка...</span></div>
             
             <div class="modal-balance-section">
@@ -73,9 +75,8 @@
         </div>
     </div>
     
-    <!-- ПОДКЛЮЧАЕМ НАШУ НАДЕЖНУЮ МОДУЛЬНУЮ АРХИТЕКТУРУ НА БУДУЩЕЕ -->
+    <!-- 🔥 ИСПРАВЛЕНО: Чистое и безопасное подключение модулей без конфликтов и грязи -->
     <script src="js/config.js"></script>
-    <script src="js/wallet.js"></script> <!-- Наша независимая бухгалтерия и кошелек -->
-    <script src="js/logic.js"></script>   <!-- Наш маркетинговый движок кнопок и маскировки -->
+    <script src="js/logic.js"></script> <!-- Единый монолитный «мозг» кнопок, кошелька и маскировки -->
 </body>
 </html>
