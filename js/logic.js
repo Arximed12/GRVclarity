@@ -21,6 +21,24 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
+    // Вспомогательная функция для безопасного перехода по ссылке
+    function sendRequestToGoogle(finalText) {
+        if (!aiForm) return;
+        
+        // Собираем точную и чистую поисковую интернет-ссылку
+        const baseUrl = aiForm.getAttribute('action') || 'https://google.ru';
+        const searchUrl = `${baseUrl}?hl=ru&udm=50&q=${encodeURIComponent(finalText)}`;
+        
+        // 🔥 ГЛАВНОЕ ИСПРАВЛЕНИЕ: Плавное перенаправление без жесткого перезапуска формы,
+        // что предотвращает ошибку ERR_CONNECTION_ABORTED в мобильном WebViewer
+        window.location.href = searchUrl;
+
+        // Аккуратно зачищаем поле ввода, чтобы интерфейс оставался премиально чистым
+        setTimeout(() => {
+            if (inputField) inputField.value = '';
+        }, 100);
+    }
+
     // Функция отрисовки 4 динамических кнопок
     function updateQuickButtons() {
         if (!roleSelect || !container) return;
@@ -40,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function() {
             button.onclick = function(e) {
                 e.preventDefault(); 
 
-                if (!inputField || !aiForm) return;
+                if (!inputField) return;
 
                 let userText = inputField.value.trim();
                 
@@ -55,21 +73,17 @@ document.addEventListener("DOMContentLoaded", function() {
                 
                 // Стена-маскировка из 120 точек, которая красиво прячет промпт за троеточие в чате
                 const lineSeparator = ".".repeat(120);
+                let finalText = "";
                 
                 if (systemPrompt) {
-                    inputField.value = `${userText} ${lineSeparator} [Настройка ИИ: ${systemPrompt}]`;
+                    finalText = `${userText} ${lineSeparator} [Настройка ИИ: ${systemPrompt}]`;
                 } else {
                     let mainRole = roleSelect.value;
-                    inputField.value = `${userText} ${lineSeparator} [Настройка ИИ: ${mainRole} / Задача: ${buttonInfo.text}]`;
+                    finalText = `${userText} ${lineSeparator} [Настройка ИИ: ${mainRole} / Задача: ${buttonInfo.text}]`;
                 }
 
-                // Отправляем форму со скрытым промптом
-                aiForm.submit();
-
-                // Моментально очищаем поле ввода в самом плагине, чтобы экран оставался чистым
-                setTimeout(() => {
-                    inputField.value = '';
-                }, 100);
+                // Отправляем запрос через нашу безопасную программную функцию
+                sendRequestToGoogle(finalText);
             };
 
             container.appendChild(button);
@@ -81,14 +95,19 @@ document.addEventListener("DOMContentLoaded", function() {
         roleSelect.addEventListener('change', updateQuickButtons);
     }
 
-    // 🔥 ЧИСТАЯ ОТПРАВКА: Если пользователь нажал Enter или кликнул на синюю стрелочку,
-    // форма улетает в ИИ-чат в абсолютно чистом виде БЕЗ ПРОМПТОВ И БЕЗ ТОЧЕК!
+    // 🔥 БЕЗОПАСНАЯ ОТПРАВКА ДЛЯ ТЕЛЕФОНА И ПЛАГИНА (Enter и Синяя кнопка со стрелочкой)
     if (aiForm) {
         aiForm.addEventListener('submit', function(e) {
-            // Больше никакой скрытой склейки здесь нет! Браузер просто отправит то, что ввел юзер
-            setTimeout(() => {
-                inputField.value = ''; // Просто аккуратно очищаем окошко после улета
-            }, 100);
+            e.preventDefault(); // Намертво блокируем стандартную HTML-отправку, вызывавшую сбой!
+
+            if (!inputField) return;
+            let userText = inputField.value.trim();
+            
+            // Если текст пустой — ничего не делаем
+            if (!userText) return;
+
+            // Отправляем абсолютно чистый текст пользователя без промптов и точек
+            sendRequestToGoogle(userText);
         });
     }
 
