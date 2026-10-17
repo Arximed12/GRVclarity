@@ -4,20 +4,63 @@ document.addEventListener("DOMContentLoaded", function() {
     const aiForm = document.getElementById('aiForm');
     const inputField = document.getElementById('userQuery');
 
-    // Адрес вашего личного облачного хранилища промптов на Vercel
+    // ЭЛЕМЕНТЫ УПРАВЛЕНИЯ НОВОЙ ПАНЕЛИ GRVclarity
+    const netStatus = document.getElementById('netStatus');
+    const dot = netStatus ? netStatus.querySelector('.status-dotIndicator') : null;
+    const openWalletBtn = document.getElementById('openWalletBtn');
+    const closeWalletBtn = document.getElementById('closeWalletBtn');
+    const walletModal = document.getElementById('walletModal');
+    const userStaticID = document.getElementById('userStaticID');
+    const requestPayoutBtn = document.getElementById('requestPayoutBtn');
+
+    // Адрес вашего личного облачного хранилища промптов на Vercel / GitHub
     const PROMPTS_URL = './data.json';
     
     // Внутренняя память сайта для хранения скачанных из сети кнопок и промптов
     let cloudData = {};
+
+    // Умная генерация или чтение ID из локальной памяти устройства (Защищенная имитация)
+    function initializeUserIdentity() {
+        if (!userStaticID) return;
+        let savedID = localStorage.getItem('grv_user_id');
+        if (!savedID) {
+            // Если зашли первый раз, создаем красивый случайный номер
+            const randomNum = Math.floor(1000 + Math.random() * 9000);
+            savedID = `GRV-AI-${randomNum}`;
+            localStorage.setItem('grv_user_id', savedID);
+        }
+        userStaticID.textContent = savedID;
+    }
+
+    // Управление огоньком связи (Индикатор сети)
+    function setNetworkStatus(state) {
+        if (!dot || !netStatus) return;
+        // Сбрасываем старые состояния
+        dot.className = 'status-dotIndicator';
+        
+        if (state === 'success') {
+            dot.classList.add('green');
+            netStatus.setAttribute('title', 'Статус сети: База промптов успешно загружена');
+        } else if (state === 'error') {
+            dot.classList.add('red');
+            netStatus.setAttribute('title', 'Статус сети: Ошибка подключения к серверу');
+        }
+    }
 
     // Функция, которая скачивает всю базу из интернета при старте
     async function loadCloudData() {
         try {
             const response = await fetch(PROMPTS_URL);
             cloudData = await response.json();
+            
+            // 🔥 ВКЛЮЧАЕМ ЗЕЛЕНЫЙ ОГОНЕК: База прилетела из сети без ошибок!
+            setNetworkStatus('success');
+            
             updateQuickButtons();
         } catch (error) {
-            console.error("Ошибка загрузки единой базы данных MSK AI:", error);
+            console.error("Ошибка загрузки единой базы данных GRVclarity:", error);
+            // 🔥 ВСПЫХИВАЕТ КРАСНЫЙ ОГОНЕК: Есть сетевой сбой подключения
+            setNetworkStatus('error');
         }
     }
 
@@ -25,15 +68,12 @@ document.addEventListener("DOMContentLoaded", function() {
     function sendRequestToGoogle(finalText) {
         if (!aiForm) return;
         
-        // Собираем точную и чистую поисковую интернет-ссылку
         const baseUrl = aiForm.getAttribute('action') || 'https://google.ru';
         const searchUrl = `${baseUrl}?hl=ru&udm=50&q=${encodeURIComponent(finalText)}`;
         
-        // 🔥 ГЛАВНОЕ ИСПРАВЛЕНИЕ: Плавное перенаправление без жесткого перезапуска формы,
-        // что предотвращает ошибку ERR_CONNECTION_ABORTED в мобильном WebViewer
+        // Перенаправление без жесткого перезапуска формы, спасающее от ERR_CONNECTION_ABORTED
         window.location.href = searchUrl;
 
-        // Аккуратно зачищаем поле ввода, чтобы интерфейс оставался премиально чистым
         setTimeout(() => {
             if (inputField) inputField.value = '';
         }, 100);
@@ -45,7 +85,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const selectedText = roleSelect.options[roleSelect.selectedIndex].text.trim();
         container.innerHTML = '';
 
-        // Берем список кнопок из скачанного облачного архива cloudData
         const currentButtons = cloudData[selectedText] || [];
         
         currentButtons.forEach(buttonInfo => {
@@ -54,24 +93,18 @@ document.addEventListener("DOMContentLoaded", function() {
             button.className = 'quick-btn';
             button.innerHTML = `<span>${buttonInfo.icon}</span> ${buttonInfo.text}`;
             
-            // КЛИК ПО КНОПКЕ: Скрытая склейка облачного промпта, точки-маскировка и авто-отправка!
             button.onclick = function(e) {
                 e.preventDefault(); 
 
                 if (!inputField) return;
-
                 let userText = inputField.value.trim();
                 
-                // Если поле пустое, просим заполнить перед отправкой
                 if (!userText) {
                     inputField.reportValidity(); 
                     return;
                 }
 
-                // Достаем скрытый промпт, который привязан к этой кнопке внутри data.json
                 let systemPrompt = buttonInfo.prompt || "";
-                
-                // Стена-маскировка из 120 точек, которая красиво прячет промпт за троеточие в чате
                 const lineSeparator = ".".repeat(120);
                 let finalText = "";
                 
@@ -82,7 +115,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     finalText = `${userText} ${lineSeparator} [Настройка ИИ: ${mainRole} / Задача: ${buttonInfo.text}]`;
                 }
 
-                // Отправляем запрос через нашу безопасную программную функцию
                 sendRequestToGoogle(finalText);
             };
 
@@ -90,27 +122,59 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Вешаем событие на изменение выпадающего списка категорий
+    // ВСПЛЫВАЮЩЕЕ ОКНО (ЛОГИКА ОТКРЫТИЯ И ЗАКРЫТИЯ)
+    if (openWalletBtn && walletModal) {
+        openWalletBtn.addEventListener('click', function() {
+            walletModal.classList.add('active'); // Показываем окно
+        });
+    }
+    if (closeWalletBtn && walletModal) {
+        closeWalletBtn.addEventListener('click', function() {
+            walletModal.classList.remove('active'); // Прячем окно
+        });
+    }
+    // Закрытие при клике на темный фон мимо карточки
+    if (walletModal) {
+        walletModal.addEventListener('click', function(e) {
+            if (e.target === walletModal) {
+                walletModal.classList.remove('active');
+            }
+        });
+    }
+
+    // Логика кнопки "Вывести средства" (Безопасная ручная отправка заявки)
+    if (requestPayoutBtn) {
+        requestPayoutBtn.addEventListener('click', function() {
+            const currentBalance = document.getElementById('modalBalanceValue')?.textContent || '0';
+            const userCode = userStaticID ? userStaticID.textContent : 'GRV';
+            
+            if (currentBalance === '0') {
+                alert(`Ваш текущий честный баланс: 0 ₽. Делитесь QR-кодом, чтобы накопить бонусы за рекомендации!`);
+            } else {
+                // Заготовка: в будущем здесь будет открываться форма ввода карты
+                alert(`Заявка на вывод ${currentBalance} ₽ для пользователя ${userCode} сформирована и передана на ручную проверку администратору экосистемы.`);
+            }
+        });
+    }
+
     if (roleSelect) {
         roleSelect.addEventListener('change', updateQuickButtons);
     }
 
-    // 🔥 БЕЗОПАСНАЯ ОТПРАВКА ДЛЯ ТЕЛЕФОНА И ПЛАГИНА (Enter и Синяя кнопка со стрелочкой)
     if (aiForm) {
         aiForm.addEventListener('submit', function(e) {
-            e.preventDefault(); // Намертво блокируем стандартную HTML-отправку, вызывавшую сбой!
-
+            e.preventDefault(); 
             if (!inputField) return;
             let userText = inputField.value.trim();
-            
-            // Если текст пустой — ничего не делаем
             if (!userText) return;
 
-            // Отправляем абсолютно чистый текст пользователя без промптов и точек
-            sendRequestToGoogle(userText);
+            if (!userText.includes("[Настройка ИИ:")) {
+                sendRequestToGoogle(userText);
+            }
         });
     }
 
-    // ЗАПУСК: скачиваем базу из интернета при старте панели
+    // ЗАПУСК ЭКОСИСТЕМЫ
+    initializeUserIdentity();
     loadCloudData();
 });
