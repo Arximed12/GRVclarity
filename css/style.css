@@ -146,7 +146,18 @@ h1 {
     border: 2px solid #2563eb;
     animation: neonBreathe 7s infinite ease-in-out;
 }
-input[type="text"] { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 16px; width: 100%; padding-right: 5px; }
+input[type="text"] { 
+    flex: 1; 
+    background-color: transparent !important; /* Намертво убирает белую подложку браузера */
+    background: transparent !important;
+    border: none !important; 
+    color: #ffffff !important; /* Делает вводимые буквы идеально белыми */
+    outline: none !important; 
+    font-size: 16px; 
+    width: 100%; 
+    padding-right: 5px; 
+}
+
 input[type="text"]::placeholder { color: #6b7280; }
 
 /* Адаптивная сетка для 4 динамических кнопок */
