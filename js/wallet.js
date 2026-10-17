@@ -1,11 +1,12 @@
 document.addEventListener("DOMContentLoaded", function() {
-    // Тотальное исправление ID селекторов согласно спецификации index.html
+    // Привязка переменных строго к вашему актуальному HTML-каркасу
     const openWalletBtn = document.getElementById('openWalletBtn');
     const closeWalletBtn = document.getElementById('closeWalletBtn');
     const walletModal = document.getElementById('walletModal');
     const userStaticID = document.getElementById('userStaticID');
     const requestPayoutBtn = document.getElementById('requestPayoutBtn');
 
+    // Безопасная генерация ID пользователя (не боится блокировок памяти Android)
     function initializeUserIdentity() {
         if (!userStaticID) return;
         let savedID = null;
@@ -16,35 +17,36 @@ document.addEventListener("DOMContentLoaded", function() {
                 savedID = `GRV-AI-${randomNum}`;
                 localStorage.setItem('grv_user_id', savedID);
             }
-        } catch (securityError) {
+        } catch (e) {
+            // Запасной вариант создания ID в оперативной памяти устройства
             const randomNum = Math.floor(1000 + Math.random() * 9000);
             savedID = `GRV-WEB-${randomNum}`;
         }
         userStaticID.textContent = savedID;
     }
 
+    // Открытие и закрытие окна кошелька по клику на баланс 👛 0 ₽
     if (openWalletBtn && walletModal) {
         openWalletBtn.addEventListener('click', function(e) {
             e.preventDefault();
             walletModal.classList.add('active');
         });
     }
-    
     if (closeWalletBtn && walletModal) {
         closeWalletBtn.addEventListener('click', function(e) {
             e.preventDefault();
             walletModal.classList.remove('active');
         });
     }
-    
     if (walletModal) {
         walletModal.addEventListener('click', function(e) {
             if (e.target === walletModal) {
-                walletModal.classList.remove('active');
+                walletModal.classList.remove('active'); // Клик по фону мимо карточки
             }
         });
     }
 
+    // Логика работы кнопки "Вывести средства"
     if (requestPayoutBtn) {
         requestPayoutBtn.addEventListener('click', function(e) {
             e.preventDefault();
@@ -59,5 +61,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // Запускаем личный кабинет при загрузке
     initializeUserIdentity();
 });
