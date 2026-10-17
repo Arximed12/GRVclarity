@@ -2,6 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <!-- 🔥 ФИЧА 1: УБРАЛИ ЛУПЫ (+/-) — Запрещаем телефону масштабировать экран, чтобы скрыть серые кнопки -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MSK AI NETWORK</title>
     <!-- Подключаем наш общий файл стилей -->
     <link rel="stylesheet" href="css/style.css">
@@ -15,7 +17,7 @@
         <select id="aiRole" class="module-select">
             <option value="действуй строго по законам РФ как высококвалифицированный юрист." selected>⚖️ Юриспруденция и Защита прав</option>
             <option value="действуй как эксперт по маркетплейсам Wildberries, Ozon и Яндекс.Маркет.">📦 Маркетплейсы (WB, Ozon, Я.Маркет)</option>
-            <option value="действуй как автоэксперт, мастер по подбору машин и специалист по автотехнике.">🚗 Автомобили и техника</option>
+            <option value="действуй как автоэксперт, мастер по подбору машин и specialist по автотехнике.">🚗 Автомобили и техника</option>
             <option value="действуй как профессиональный маркетолог, копирайтер и бизнес-консультант.">💼 Услуги и Бизнес</option>
         </select>
 
@@ -25,7 +27,7 @@
             
             <div class="input-box">
                 <input type="text" name="q" id="userQuery" placeholder="Опишите вашу проблему или выберите вопрос ниже..." required>
-                <!-- 🔥 ДОБАВИЛИ КНОПКУ-ОТПРАВИТЕЛЬ С КРАЮ ПОЛЯ -->
+                <!-- Добавили кнопку-отправитель с краю поля -->
                 <button type="submit" class="send-mini-btn" title="Отправить запрос">➔</button>
             </div>
             
@@ -36,6 +38,7 @@
     
     <!-- Подключаем внешние скрипты -->
     <script src="js/config.js"></script>
-    <script src="js/logic.js"></script>
+    <!-- 🔥 ФИЧА 2: СБРОС КЭША — Хвостик ?v=3.5 принудительно включает новые ТОЧКИ вместо черточек у всех клиентов -->
+    <script src="js/logic.js?v=3.5"></script>
 </body>
 </html>
