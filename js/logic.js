@@ -4,31 +4,30 @@ document.addEventListener("DOMContentLoaded", function() {
     const aiForm = document.getElementById('aiForm');
     const inputField = document.getElementById('userQuery');
 
-    // Прямой относительный адрес к вашей единой базе данных на GitHub Pages
-    const DATA_URL = './data.json';
+    // Адрес вашего личного облачного хранилища промптов на Vercel
+    const PROMPTS_URL = './data.json';
     
-    // Внутренняя память сайта, куда запишется скачанный из сети data.json
+    // Внутренняя память сайта для хранения скачанных из сети кнопок и промптов
     let cloudData = {};
 
-    // Главная функция: за долю секунды скачивает всю базу кнопок и промптов из интернета
+    // Функция, которая скачивает всю базу из интернета при старте
     async function loadCloudData() {
         try {
-            const response = await fetch(DATA_URL);
+            const response = await fetch(PROMPTS_URL);
             cloudData = await response.json();
-            // Как только данные прилетели из сети — мгновенно рисуем кнопки на экране!
             updateQuickButtons();
         } catch (error) {
             console.error("Ошибка загрузки единой базы данных MSK AI:", error);
         }
     }
 
-    // Функция отрисовки 4 динамических кнопок на основе интернет-данных
+    // Функция отрисовки 4 динамических кнопок
     function updateQuickButtons() {
         if (!roleSelect || !container) return;
         const selectedText = roleSelect.options[roleSelect.selectedIndex].text.trim();
         container.innerHTML = '';
 
-        // Теперь берем список кнопок ПРЯМО из скачанного облачного архива cloudData
+        // Берем список кнопок из скачанного облачного архива cloudData
         const currentButtons = cloudData[selectedText] || [];
         
         currentButtons.forEach(buttonInfo => {
@@ -37,7 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
             button.className = 'quick-btn';
             button.innerHTML = `<span>${buttonInfo.icon}</span> ${buttonInfo.text}`;
             
-            // КЛИК ПО КНОПКЕ: Скрытая склейка облачного промпта и авто-отправка!
+            // КЛИК ПО КНОПКЕ: Скрытая склейка облачного промпта, точки-маскировка и авто-отправка!
             button.onclick = function(e) {
                 e.preventDefault(); 
 
@@ -54,9 +53,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Достаем скрытый промпт, который привязан к этой кнопке внутри data.json
                 let systemPrompt = buttonInfo.prompt || "";
                 
-                // Линия-маскировка, которая красиво прячет промпт за троеточие в чате
-                const lineSeparator = ".".repeat(111120);
-;
+                // Стена-маскировка из 120 точек, которая красиво прячет промпт за троеточие в чате
+                const lineSeparator = ".".repeat(120);
                 
                 if (systemPrompt) {
                     inputField.value = `${userText} ${lineSeparator} [Настройка ИИ: ${systemPrompt}]`;
@@ -65,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     inputField.value = `${userText} ${lineSeparator} [Настройка ИИ: ${mainRole} / Задача: ${buttonInfo.text}]`;
                 }
 
-                // Отправляем форму со скрытой склейкой в Google
+                // Отправляем форму со скрытым промптом
                 aiForm.submit();
 
                 // Моментально очищаем поле ввода в самом плагине, чтобы экран оставался чистым
@@ -78,25 +76,22 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
+    // Вешаем событие на изменение выпадающего списка категорий
     if (roleSelect) {
         roleSelect.addEventListener('change', updateQuickButtons);
     }
 
+    // 🔥 ЧИСТАЯ ОТПРАВКА: Если пользователь нажал Enter или кликнул на синюю стрелочку,
+    // форма улетает в ИИ-чат в абсолютно чистом виде БЕЗ ПРОМПТОВ И БЕЗ ТОЧЕК!
     if (aiForm) {
         aiForm.addEventListener('submit', function(e) {
-            let userText = inputField.value.trim();
-            let mainRole = roleSelect.value;
-            const lineSeparator = " — ".repeat(40);
-            
-            if (!userText.includes("[Настройка ИИ:")) {
-                inputField.value = `${userText} ${lineSeparator} [Настройка ИИ: ${mainRole}]`;
-                setTimeout(() => {
-                    inputField.value = '';
-                }, 100);
-            }
+            // Больше никакой скрытой склейки здесь нет! Браузер просто отправит то, что ввел юзер
+            setTimeout(() => {
+                inputField.value = ''; // Просто аккуратно очищаем окошко после улета
+            }, 100);
         });
     }
 
-    // ЗАПУСК: при открытии сайта сразу включаем скачивание базы из сети
+    // ЗАПУСК: скачиваем базу из интернета при старте панели
     loadCloudData();
 });
