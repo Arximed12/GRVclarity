@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", function() {
     const userStaticID = document.getElementById('userStaticID');
     const requestPayoutBtn = document.getElementById('requestPayoutBtn');
 
-    // Безопасная генерация ID пользователя (не боится блокировок Android)
     function initializeUserIdentity() {
         if (!userStaticID) return;
         let savedID = null;
@@ -23,7 +22,6 @@ document.addEventListener("DOMContentLoaded", function() {
         userStaticID.textContent = savedID;
     }
 
-    // Открытие и закрытие окна кошелька по клику
     if (openWalletBtn && walletModal) {
         openWalletBtn.addEventListener('click', function() {
             walletModal.classList.add('active');
@@ -42,7 +40,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Логика кнопки "Вывести средства"
     if (requestPayoutBtn) {
         requestPayoutBtn.addEventListener('click', function() {
             const currentBalance = document.getElementById('modalBalanceValue')?.textContent || '0';
@@ -56,6 +53,5 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Запускаем личный кабинет
     initializeUserIdentity();
 });
