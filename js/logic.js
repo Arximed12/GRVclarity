@@ -4,65 +4,20 @@ document.addEventListener("DOMContentLoaded", function() {
     const aiForm = document.getElementById('aiForm');
     const inputField = document.getElementById('userQuery');
 
-    // ЭЛЕМЕНТЫ УПРАВЛЕНИЯ ПАНЕЛИ GRVclarity (Сохраняем новые элементы)
-    const netStatus = document.getElementById('netStatus');
-    const dot = netStatus ? netStatus.querySelector('.status-dotIndicator') : null;
-    const openWalletBtn = document.getElementById('openWalletBtn');
-    const closeWalletBtn = document.getElementById('closeWalletBtn');
-    const walletModal = document.getElementById('walletModal');
-    const userStaticID = document.getElementById('userStaticID');
-    const requestPayoutBtn = document.getElementById('requestPayoutBtn');
-
-    // 🔥 ИСПРАВЛЕНО: Универсальный путь, который намертво связывает телефон и сайт с вашим файлом в сети
-    const PROMPTS_URL = 'https://github.io';
+    // Адрес вашего личного облачного хранилища промптов на Vercel
+    const PROMPTS_URL = './data.json';
     
     // Внутренняя память сайта для хранения скачанных из сети кнопок и промптов
     let cloudData = {};
-
-    // 🔥 ДОБАВЛЕНО: Безопасное создание ID пользователя для личного кабинета
-    function initializeUserIdentity() {
-        if (!userStaticID) return;
-        let savedID = null;
-        try {
-            savedID = localStorage.getItem('grv_user_id');
-            if (!savedID) {
-                const randomNum = Math.floor(1000 + Math.random() * 9000);
-                savedID = `GRV-AI-${randomNum}`;
-                localStorage.setItem('grv_user_id', savedID);
-            }
-        } catch (e) {
-            const randomNum = Math.floor(1000 + Math.random() * 9000);
-            savedID = `GRV-WEB-${randomNum}`;
-        }
-        userStaticID.textContent = savedID;
-    }
-
-    // 🔥 ДОБАВЛЕНО: Управление огоньком связи (Индикатор сети)
-    function setNetworkStatus(state) {
-        if (!dot || !netStatus) return;
-        dot.className = 'status-dotIndicator'; // Сброс
-        if (state === 'success') {
-            dot.classList.add('green');
-            netStatus.setAttribute('title', 'Статус сети: База промптов успешно загружена');
-        } else if (state === 'error') {
-            dot.classList.add('red');
-            netStatus.setAttribute('title', 'Статус сети: Ошибка подключения к серверу');
-        }
-    }
 
     // Функция, которая скачивает всю базу из интернета при старте
     async function loadCloudData() {
         try {
             const response = await fetch(PROMPTS_URL);
             cloudData = await response.json();
-            
-            // Зажигаем зеленый огонек при успешной загрузке
-            setNetworkStatus('success');
             updateQuickButtons();
         } catch (error) {
-            console.error("Ошибка загрузки единой базы данных:", error);
-            // Зажигаем красный огонек при сбое
-            setNetworkStatus('error');
+            console.error("Ошибка загрузки единой базы данных MSK AI:", error);
         }
     }
 
@@ -70,37 +25,28 @@ document.addEventListener("DOMContentLoaded", function() {
     function sendRequestToGoogle(finalText) {
         if (!aiForm) return;
         
+        // Собираем точную и чистую поисковую интернет-ссылку
         const baseUrl = aiForm.getAttribute('action') || 'https://google.ru';
         const searchUrl = `${baseUrl}?hl=ru&udm=50&q=${encodeURIComponent(finalText)}`;
         
-        // Умное разделение: плагин открывает в новом окне, телефон — на месте
-        if (window.self !== window.top) {
-            window.open(searchUrl, '_blank');
-        } else {
-            window.location.href = searchUrl;
-        }
+        // 🔥 ГЛАВНОЕ ИСПРАВЛЕНИЕ: Плавное перенаправление без жесткого перезапуска формы,
+        // что предотвращает ошибку ERR_CONNECTION_ABORTED в мобильном WebViewer
+        window.location.href = searchUrl;
 
+        // Аккуратно зачищаем поле ввода, чтобы интерфейс оставался премиально чистым
         setTimeout(() => {
             if (inputField) inputField.value = '';
         }, 100);
     }
 
-    // 🔥 ВАША ОРИГИНАЛЬНАЯ ФУНКЦИЯ ОТРИСОВКИ КНОПОК С АВТОПОДБОРОМ ЭМОДЗИ
+    // Функция отрисовки 4 динамических кнопок
     function updateQuickButtons() {
         if (!roleSelect || !container) return;
         const selectedText = roleSelect.options[roleSelect.selectedIndex].text.trim();
         container.innerHTML = '';
 
-        // Ищем массив кнопок в cloudData
-        let currentButtons = cloudData[selectedText];
-        
-        // Хак-защита от разницы текстовых значков эмодзи весов/коробок в файле data.json
-        if (!currentButtons) {
-            const keys = Object.keys(cloudData);
-            const cleanText = selectedText.replace(/[^а-яа-ёа-зй-шы-ъе-я\s]/gi, '').trim();
-            const matchedKey = keys.find(k => k.replace(/[^а-яа-ёа-зй-шы-ъе-я\s]/gi, '').trim() === cleanText);
-            currentButtons = cloudData[matchedKey] || [];
-        }
+        // Берем список кнопок из скачанного облачного архива cloudData
+        const currentButtons = cloudData[selectedText] || [];
         
         currentButtons.forEach(buttonInfo => {
             const button = document.createElement('button');
@@ -108,21 +54,25 @@ document.addEventListener("DOMContentLoaded", function() {
             button.className = 'quick-btn';
             button.innerHTML = `<span>${buttonInfo.icon}</span> ${buttonInfo.text}`;
             
-            // КЛИК ПО КНОПКЕ: Скрытая склейка, пустые строки-маскировка и отправка!
+            // КЛИК ПО КНОПКЕ: Скрытая склейка облачного промпта, точки-маскировка и авто-отправка!
             button.onclick = function(e) {
                 e.preventDefault(); 
 
                 if (!inputField) return;
+
                 let userText = inputField.value.trim();
                 
+                // Если поле пустое, просим заполнить перед отправкой
                 if (!userText) {
                     inputField.reportValidity(); 
                     return;
                 }
 
+                // Достаем скрытый промпт, который привязан к этой кнопке внутри data.json
                 let systemPrompt = buttonInfo.prompt || "";
-                // Плавная скрытая маскировка на 100 строк вниз
-                const lineSeparator = "\n".repeat(100);
+                
+                // Стена-маскировка из 120 точек, которая красиво прячет промпт за троеточие в чате
+                const lineSeparator = ".".repeat(120);
                 let finalText = "";
                 
                 if (systemPrompt) {
@@ -132,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     finalText = `${userText} ${lineSeparator} [Настройка ИИ: ${mainRole} / Задача: ${buttonInfo.text}]`;
                 }
 
+                // Отправляем запрос через нашу безопасную программную функцию
                 sendRequestToGoogle(finalText);
             };
 
@@ -139,57 +90,27 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // 🔥 ДОБАВЛЕНО: ВСПЛЫВАЮЩЕЕ ОКНО КОШЕЛЬКА (ОТКРЫТИЕ И ЗАКРЫТИЕ)
-    if (openWalletBtn && walletModal) {
-        openWalletBtn.addEventListener('click', function() {
-            walletModal.classList.add('active');
-        });
-    }
-    if (closeWalletBtn && walletModal) {
-        closeWalletBtn.addEventListener('click', function() {
-            walletModal.classList.remove('active');
-        });
-    }
-    if (walletModal) {
-        walletModal.addEventListener('click', function(e) {
-            if (e.target === walletModal) {
-                walletModal.classList.remove('active');
-            }
-        });
-    }
-
-    // 🔥 ДОБАВЛЕНО: Логика кнопки "Вывести средства"
-    if (requestPayoutBtn) {
-        requestPayoutBtn.addEventListener('click', function() {
-            const currentBalance = document.getElementById('modalBalanceValue')?.textContent || '0';
-            const userCode = userStaticID ? userStaticID.textContent : 'GRV';
-            
-            if (currentBalance === '0' || currentBalance.includes('0 ₽')) {
-                alert(`Ваш текущий честный баланс: 0 ₽. Делитесь QR-кодом, чтобы накопить бонусы за рекомендации!`);
-            } else {
-                alert(`Заявка на вывод ${currentBalance} для пользователя ${userCode} сформирована и передана на проверку.`);
-            }
-        });
-    }
-
+    // Вешаем событие на изменение выпадающего списка категорий
     if (roleSelect) {
         roleSelect.addEventListener('change', updateQuickButtons);
     }
 
+    // 🔥 БЕЗОПАСНАЯ ОТПРАВКА ДЛЯ ТЕЛЕФОНА И ПЛАГИНА (Enter и Синяя кнопка со стрелочкой)
     if (aiForm) {
         aiForm.addEventListener('submit', function(e) {
-            e.preventDefault(); 
+            e.preventDefault(); // Намертво блокируем стандартную HTML-отправку, вызывавшую сбой!
+
             if (!inputField) return;
             let userText = inputField.value.trim();
+            
+            // Если текст пустой — ничего не делаем
             if (!userText) return;
 
-            if (!userText.includes("[Настройка ИИ:")) {
-                sendRequestToGoogle(userText);
-            }
+            // Отправляем абсолютно чистый текст пользователя без промптов и точек
+            sendRequestToGoogle(userText);
         });
     }
 
-    // ЗАПУСК ПОЛНОЙ ЭКОСИСТЕМЫ
-    initializeUserIdentity();
+    // ЗАПУСК: скачиваем базу из интернета при старте панели
     loadCloudData();
 });
