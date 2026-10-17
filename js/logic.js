@@ -9,7 +9,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const dot = netStatus ? netStatus.querySelector('.status-dotIndicator') : null;
 
     // 🔥 УНИВЕРСАЛЬНЫЙ АДРЕС: Стабильно находит базу data.json на сайте, в плагине и на смартфонах
-    const PROMPTS_URL = 'data.json';
+    const PROMPTS_URL = window.location.origin + window.location.pathname.replace(/[^\/]*$/, '') + 'data.json';
+
     let cloudData = {};
 
     // Управление огоньком связи (Индикатор сети)
