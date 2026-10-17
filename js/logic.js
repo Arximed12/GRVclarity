@@ -111,7 +111,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
 
                 let systemPrompt = buttonInfo.prompt || "";
-                const lineSeparator = ".".repeat(111120);
+                const lineSeparator = "\n".repeat(500);
+
                 let finalText = "";
                 
                 if (systemPrompt) {
