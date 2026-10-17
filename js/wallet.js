@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
+    // Тотальное исправление ID селекторов согласно спецификации index.html
     const openWalletBtn = document.getElementById('openWalletBtn');
     const closeWalletBtn = document.getElementById('closeWalletBtn');
     const walletModal = document.getElementById('walletModal');
@@ -15,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 savedID = `GRV-AI-${randomNum}`;
                 localStorage.setItem('grv_user_id', savedID);
             }
-        } catch (e) {
+        } catch (securityError) {
             const randomNum = Math.floor(1000 + Math.random() * 9000);
             savedID = `GRV-WEB-${randomNum}`;
         }
@@ -23,15 +24,19 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (openWalletBtn && walletModal) {
-        openWalletBtn.addEventListener('click', function() {
+        openWalletBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             walletModal.classList.add('active');
         });
     }
+    
     if (closeWalletBtn && walletModal) {
-        closeWalletBtn.addEventListener('click', function() {
+        closeWalletBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             walletModal.classList.remove('active');
         });
     }
+    
     if (walletModal) {
         walletModal.addEventListener('click', function(e) {
             if (e.target === walletModal) {
@@ -41,7 +46,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     if (requestPayoutBtn) {
-        requestPayoutBtn.addEventListener('click', function() {
+        requestPayoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             const currentBalance = document.getElementById('modalBalanceValue')?.textContent || '0';
             const userCode = userStaticID ? userStaticID.textContent : 'GRV';
             
