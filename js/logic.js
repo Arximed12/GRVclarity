@@ -4,30 +4,50 @@ document.addEventListener("DOMContentLoaded", function() {
     const aiForm = document.getElementById('aiForm');
     const inputField = document.getElementById('userQuery');
 
+    // ЭЛЕМЕНТЫ СЕТЕВОГО ИНДИКАТОРА
     const netStatus = document.getElementById('netStatus');
     const dot = netStatus ? netStatus.querySelector('.status-dotIndicator') : null;
 
-    // Использование строгого относительного пути к файлу конфигурации в одном домене
+    // Чистый путь к облачной базе данных внутри папки репозитория grvclarity
     const PROMPTS_URL = './data.json';
     let cloudData = {};
 
+    // Управление огоньком связи (Индикатор сети)
     function setNetworkStatus(state) {
         if (!dot || !netStatus) return;
-        dot.className = 'status-dotIndicator';
+        dot.className = 'status-dotIndicator'; // Сброс классов
         if (state === 'success') {
             dot.classList.add('green');
             netStatus.setAttribute('title', 'Статус сети: Облачная база промптов успешно загружена');
         } else if (state === 'error') {
             dot.classList.add('red');
-            netStatus.setAttribute('title', 'Статус сети: Критическая ошибка загрузки конфигурации');
+            netStatus.setAttribute('title', 'Статус сети: Ошибка подключения к серверу');
         }
     }
 
+    // Функция, которая асинхронно скачивает всю базу из файла при старте
+    async function loadCloudData() {
+        try {
+            const response = await fetch(PROMPTS_URL);
+            if (!response.ok) throw new Error(`Ошибка сервера: ${response.status}`);
+            cloudData = await response.json();
+            
+            // Зажигаем ЗЕЛЕНЫЙ неон связи
+            setNetworkStatus('success');
+            updateQuickButtons();
+        } catch (error) {
+            console.error("Критическая ошибка сети GRVclarity:", error);
+            setNetworkStatus('error'); // Если сбой — зажигаем КРАСНЫЙ огонёк
+        }
+    }
+
+    // Вспомогательная функция для безопасного перехода по ссылке
     function sendRequestToGoogle(finalText) {
         if (!aiForm) return;
         const baseUrl = aiForm.getAttribute('action') || 'https://google.ru';
         const searchUrl = `${baseUrl}?hl=ru&udm=50&q=${encodeURIComponent(finalText)}`;
         
+        // Умное разделение: в плагине открываем в новой вкладке, на телефоне — внешнее окно
         if (window.self !== window.top) {
             window.open(searchUrl, '_blank');
         } else {
@@ -39,11 +59,13 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 100);
     }
 
+    // Функция отрисовки 4 динамических кнопок
     function updateQuickButtons() {
         if (!roleSelect || !container) return;
         const selectedText = roleSelect.options[roleSelect.selectedIndex].text.trim();
         container.innerHTML = '';
 
+        // Хак-защита от разницы текстовых значков эмодзи весов/коробок в файле data.json
         let currentButtons = cloudData[selectedText];
         
         if (!currentButtons) {
@@ -59,6 +81,7 @@ document.addEventListener("DOMContentLoaded", function() {
             button.className = 'quick-btn';
             button.innerHTML = `<span>${buttonInfo.icon}</span> ${buttonInfo.text}`;
             
+            // КЛИК ПО КНОПКЕ: Скрытая склейка, маскировка из 120 точек и отправка
             button.onclick = function(e) {
                 e.preventDefault(); 
                 if (!inputField) return;
@@ -70,14 +93,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
 
                 let systemPrompt = buttonInfo.prompt || "";
-                
-                // Контекст лимита 60: валидация длины строки для маркетплейсов
-                if (selectedText.includes("Маркетплейсы") && buttonInfo.text.includes("SEO") && userText.length > 60) {
-                    userText = userText.substring(0, 60);
-                    console.warn("Внимание: Заголовок автоматически усечен до 60 символов согласно лимитам SEO Google.");
-                }
-
-                const lineSeparator = ".".repeat(120);
+                const lineSeparator = ".".repeat(120); // Маскировка точками
                 let finalText = "";
                 
                 if (systemPrompt) {
@@ -94,26 +110,14 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    async function loadCloudData() {
-        try {
-            const response = await fetch(PROMPTS_URL);
-            if (!response.ok) throw new Error(`Status: ${response.status}`);
-            cloudData = await response.json();
-            setNetworkStatus('success');
-            updateQuickButtons();
-        } catch (error) {
-            console.error("Ошибка асинхронного вызова loadCloudData:", error);
-            setNetworkStatus('error');
-        }
-    }
-
     if (roleSelect) {
         roleSelect.addEventListener('change', updateQuickButtons);
     }
 
+    // 🔥 СИНИЙ КРУГЛЯШОК И ENTER: Намертво блокируют сбой формы на смартфонах и шлют чистый текст
     if (aiForm) {
         aiForm.addEventListener('submit', function(e) {
-            e.preventDefault(); 
+            e.preventDefault(); // Защита от белого экрана и ошибки ERR_CONNECTION_ABORTED
             if (!inputField) return;
             let userText = inputField.value.trim();
             if (!userText) return;
@@ -124,6 +128,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Запуск строго после полной декларации функций во избежание референс-ошибок Hoisting
+    // ЗАПУСК ОНЛАЙН-ДВИЖКА КНОПОК
     loadCloudData();
 });
