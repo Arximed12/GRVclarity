@@ -2,22 +2,35 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- 🔥 ФИЧА 1: УБРАЛИ ЛУПЫ (+/-) — Запрещаем телефону масштабировать экран, чтобы скрыть серые кнопки -->
+    <!-- Защита от луп (+/-): Запрещаем телефону масштабировать интерфейс расширения -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MSK AI NETWORK</title>
+    <title>GRVclarity</title>
     <!-- Подключаем наш общий файл стилей -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <!-- ВЕРХНЯЯ СИСТЕМНАЯ ПАНЕЛЬ -->
+    <div class="top-status-bar">
+        <div class="network-status" id="netStatus" title="Статус сети: Подключение...">
+            <span class="status-dotIndicator yellow"></span>
+            <span class="status-text">Сеть</span>
+        </div>
+        <div class="balance-badge" id="openWalletBtn" title="Открыть кошелек и QR-код">
+            👛 <span id="topBalanceValue">0</span> ₽
+        </div>
+    </div>
+
     <div class="wrapper">
-        <h1>MSK AI NETWORK</h1>
+        <!-- Брендированный неоновый логотип -->
+        <img src="GRV.png" alt="GRVclarity Логотип" class="brand-logo-img">
+        
+        <h1>GRVclarity</h1>
         <div class="subtitle">👑 Премиальный ИИ-Ассистент</div>
         
-        <!-- Категории, которые строго совпадают с кнопками в config.js -->
         <select id="aiRole" class="module-select">
             <option value="действуй строго по законам РФ как высококвалифицированный юрист." selected>⚖️ Юриспруденция и Защита прав</option>
             <option value="действуй как эксперт по маркетплейсам Wildberries, Ozon и Яндекс.Маркет.">📦 Маркетплейсы (WB, Ozon, Я.Маркет)</option>
-            <option value="действуй как автоэксперт, мастер по подбору машин и specialist по автотехнике.">🚗 Автомобили и техника</option>
+            <option value="действуй как автоэксперт, мастер по подбору машин и специалист по автотехнике.">🚗 Автомобили и техника</option>
             <option value="действуй как профессиональный маркетолог, копирайтер и бизнес-консультант.">💼 Услуги и Бизнес</option>
         </select>
 
@@ -27,18 +40,39 @@
             
             <div class="input-box">
                 <input type="text" name="q" id="userQuery" placeholder="Опишите вашу проблему или выберите вопрос ниже..." required>
-                <!-- Добавили кнопку-отправитель с краю поля -->
                 <button type="submit" class="send-mini-btn" title="Отправить запрос">➔</button>
             </div>
             
-            <!-- Сюда наш движок теперь будет красиво выводить 4 кнопки с вопросами -->
             <div class="quick-buttons-grid" id="dynamic-buttons-container"></div>
         </form>
     </div>
+
+    <!-- ВСПЛЫВАЮЩЕЕ ПРЕМИАЛЬНОЕ ОКНО (КОШЕЛЕК И QR) -->
+    <div class="modal-overlay" id="walletModal">
+        <div class="modal-content-card">
+            <button class="modal-close-xBtn" id="closeWalletBtn">✕</button>
+            <h3 class="modal-title">Личный кабинет GRV</h3>
+            
+            <div class="user-id-badge">ID: <span id="userStaticID">Загрузка...</span></div>
+            
+            <div class="modal-balance-section">
+                <div class="modal-balance-label">Текущий баланс</div>
+                <div class="modal-balance-amount"><span id="modalBalanceValue">0</span> ₽</div>
+            </div>
+
+            <!-- Зона для QR-кода -->
+            <div class="qr-container-box">
+                <div class="qr-placeholder-text">Заготовка QR-кода<br><small style="color: #6b7280;">ссылка для приглашения друзей</small></div>
+            </div>
+
+            <p class="bonus-promo-info-text">🎁 Делитесь вашим личным QR-кодом! Получайте по <strong>100 рублей</strong> за каждую первую оплаченную подписку привлеченного пользователя.</p>
+
+            <button class="payout-action-btn" id="requestPayoutBtn">Вывести средства</button>
+        </div>
+    </div>
     
-    <!-- Подключаем внешние скрипты -->
     <script src="js/config.js"></script>
-    <!-- 🔥 ФИЧА 2: СБРОС КЭША — Хвостик ?v=3.5 принудительно включает новые ТОЧКИ вместо черточек у всех клиентов -->
-    <script src="js/logic.js?v=3.5"></script>
+    <!-- Сброс кэша: меняем хвостик версии на v=4.0, чтобы браузеры применили новые функции панели -->
+    <script src="js/logic.js?v=4.0"></script>
 </body>
 </html>
