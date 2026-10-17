@@ -13,19 +13,18 @@ document.addEventListener("DOMContentLoaded", function() {
     const userStaticID = document.getElementById('userStaticID');
     const requestPayoutBtn = document.getElementById('requestPayoutBtn');
 
-    // 🔥 ИСПРАВЛЕНО: Указан жесткий, прямой интернет-адрес вашей базы промптов на GitHub
-    const PROMPTS_URL = 'https://arximed12.github.io/GRVclarity/';
+    // 🔥 АВТОМАТИЧЕСКИЙ ПУТЬ: Сам находит data.json на вашем Гитхабе без ошибок регистра букв
+    const PROMPTS_URL = window.location.origin + window.location.pathname.replace(/[^\/]*\$/, '') + 'data.json';
     
     // Внутренняя память сайта для хранения скачанных из сети кнопок и промптов
     let cloudData = {};
 
-    // 🔥 ИСПРАВЛЕНО: Защищенная трехуровневая генерация ID (не боится блокировок Android)
+    // Защищенная трехуровневая генерация ID (не боится блокировок Android)
     function initializeUserIdentity() {
         if (!userStaticID) return;
         let savedID = null;
         
         try {
-            // Пробуем безопасно прочитать локальную память устройства
             savedID = localStorage.getItem('grv_user_id');
             if (!savedID) {
                 const randomNum = Math.floor(1000 + Math.random() * 9000);
@@ -33,8 +32,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 localStorage.setItem('grv_user_id', savedID);
             }
         } catch (securityError) {
-            // Если телефон жестко заблокировал localStorage, создаем красивый временный ID в оперативной памяти
-            console.warn("Локальное хранилище заблокировано системой безопасности телефона. Включен защитный ID.");
+            console.warn("Локальное хранилище заблокировано системой безопасности телефона.");
             const randomNum = Math.floor(1000 + Math.random() * 9000);
             savedID = `GRV-WEB-${randomNum}`;
         }
@@ -45,8 +43,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Управление огоньком связи (Индикатор сети)
     function setNetworkStatus(state) {
         if (!dot || !netStatus) return;
-        // Сбрасываем старые классы цвета
-        dot.classList.remove('yellow', 'green', 'red');
+        dot.className = 'status-dotIndicator'; // Сброс
         
         if (state === 'success') {
             dot.classList.add('green');
@@ -61,15 +58,15 @@ document.addEventListener("DOMContentLoaded", function() {
     async function loadCloudData() {
         try {
             const response = await fetch(PROMPTS_URL);
-            if (!response.ok) throw new Error(`Ошибка сервера: ${response.status}`);
             cloudData = await response.json();
             
-            // 🔥 ВКЛЮЧАЕМ ЗЕЛЕНЫЙ ОГОНЕК: База прилетела из сети без ошибок!
+            // ВКЛЮЧАЕМ ЗЕЛЕНЫЙ ОГОНЕК: База прилетела из сети без ошибок!
             setNetworkStatus('success');
+            
+            // Сразу запускаем отрисовку кнопок
             updateQuickButtons();
         } catch (error) {
             console.error("Ошибка загрузки единой базы данных GRVclarity:", error);
-            // 🔥 ВСПЫХИВАЕТ КРАСНЫЙ ОГОНЕК: Есть сетевой сбой подключения
             setNetworkStatus('error');
         }
     }
@@ -81,7 +78,6 @@ document.addEventListener("DOMContentLoaded", function() {
         const baseUrl = aiForm.getAttribute('action') || 'https://google.ru';
         const searchUrl = `${baseUrl}?hl=ru&udm=50&q=${encodeURIComponent(finalText)}`;
         
-        // УМНОЕ РАЗДЕЛЕНИЕ: Проверяем, запущен ли код внутри плагина
         if (window.self !== window.top) {
             window.open(searchUrl, '_blank');
         } else {
@@ -93,13 +89,24 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 100);
     }
 
-    // Функция отрисовки 4 динамических кнопок
+    // 🔥 ФУНКЦИЯ ОТРИСОВКИ КНОПОК ИЗ ВАШЕЙ ОРИГИНАЛЬНОЙ ВЕРСИИ НА ГИТХАБЕ
     function updateQuickButtons() {
         if (!roleSelect || !container) return;
+        
+        // Получаем чистый текст выбранной роли
         const selectedText = roleSelect.options[roleSelect.selectedIndex].text.trim();
         container.innerHTML = '';
 
-        const currentButtons = cloudData[selectedText] || [];
+        // Находим массив кнопок в cloudData. Если из-за разницы эмодзи не находит, ищет по запасному совпадению слов
+        let currentButtons = cloudData[selectedText];
+        
+        if (!currentButtons) {
+            // Защитный хак: ищем по ключевым словам, если в data.json съехали эмодзи весов или коробок
+            const keys = Object.keys(cloudData);
+            const cleanText = selectedText.replace(/[^а-яа-ёа-зй-шы-ъе-я\s]/gi, '').trim();
+            const matchedKey = keys.find(k => k.replace(/[^а-яа-ёа-зй-шы-ъе-я\s]/gi, '').trim() === cleanText);
+            currentButtons = cloudData[matchedKey] || [];
+        }
         
         currentButtons.forEach(buttonInfo => {
             const button = document.createElement('button');
@@ -119,10 +126,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
 
                 let systemPrompt = buttonInfo.prompt || "";
-                // 🔥 ОПТИМАЛЬНАЯ МАСКИРОВКА: 100 переносов строк сдвинут промпт глубоко вниз без ошибок Google!
                 const lineSeparator = "\n".repeat(100);
 
                 let finalText = "";
+                
                 if (systemPrompt) {
                     finalText = `${userText} ${lineSeparator} [Настройка ИИ: ${systemPrompt}]`;
                 } else {
@@ -165,7 +172,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (currentBalance === '0' || currentBalance.includes('0 ₽')) {
                 alert(`Ваш текущий честный баланс: 0 ₽. Делитесь QR-кодом, чтобы накопить бонусы за рекомендации!`);
             } else {
-                alert(`Заявка на вывод ${currentBalance} для пользователя ${userCode} сформирована и передана на проверку.`);
+                alert(`Заявка на вывод ${currentBalance} ₽ для пользователя ${userCode} сформирована и передана на ручную проверку администратору экосистемы.`);
             }
         });
     }
