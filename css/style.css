@@ -26,10 +26,10 @@ h1 { color: #818cf8; font-size: 24px; font-weight: bold; margin-bottom: 5px; let
 /* Поле ввода */
 .input-box {
     background: rgba(31, 41, 55, 0.6); border: 2px solid #4338ca; border-radius: 16px;
-    padding: 12px; width: 100%; box-sizing: border-box; margin-bottom: 15px;
+    padding: 8px 12px; width: 100%; box-sizing: border-box; margin-bottom: 15px;
     box-shadow: 0 0 15px rgba(67, 56, 202, 0.2); display: flex; align-items: center; gap: 10px;
 }
-input[type="text"] { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 16px; width: 100%; }
+input[type="text"] { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 16px; width: 100%; padding-right: 5px; }
 input[type="text"]::placeholder { color: #6b7280; }
 
 /* Адаптивная сетка для 4 динамических кнопок */
@@ -43,3 +43,29 @@ input[type="text"]::placeholder { color: #6b7280; }
     transition: all 0.2s ease; display: flex; align-items: center; gap: 8px; font-weight: 500; box-sizing: border-box;
 }
 .quick-btn:hover { background: #1f2937; border-color: #818cf8; transform: translateY(-1px); box-shadow: 0 0 10px rgba(129, 140, 248, 0.3); }
+
+/* 🔥 КРУГЛАЯ СИНЯЯ КНОПКА ОТПРАВКИ С КРАЮ ПОЛЯ ВВОДА */
+.send-mini-btn {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8); /* Премиальный синий градиент */
+    color: white;
+    border: none;
+    border-radius: 50%; /* Делаем её идеально круглой */
+    width: 34px;
+    height: 34px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
+    flex-shrink: 0; /* Защита: кнопка не сожмется на узких экранах */
+}
+.send-mini-btn:hover {
+    transform: scale(1.06); /* Мягкое увеличение при наведении */
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.7);
+}
+.send-mini-btn:active {
+    transform: scale(0.96); /* Эффект физического нажатия пальцем */
+}
