@@ -8,8 +8,8 @@ document.addEventListener("DOMContentLoaded", function() {
     const netStatus = document.getElementById('netStatus');
     const dot = netStatus ? netStatus.querySelector('.status-dotIndicator') : null;
 
-    // 🔥 СТРОГО ОНЛАЙН: Прямая и точная интернет-ссылка на ваш файл Data.json
-    const PROMPTS_URL = 'https://github.io';
+    // 🔥 ИСПРАВЛЕНО: Чистый путь папки (без интернетовских доменов), строго с большой буквы D
+    const PROMPTS_URL = './Data.json';
     let cloudData = {};
 
     // Управление огоньком связи (Индикатор сети)
@@ -25,20 +25,19 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
 
-    // Функция, которая скачивает базу из интернета при старте
+    // Функция, которая скачивает базу из папки при старте
     async function loadCloudData() {
         try {
             const response = await fetch(PROMPTS_URL);
             if (!response.ok) throw new Error(`Ошибка сервера: ${response.status}`);
             cloudData = await response.json();
             
-            // Если интернет есть и файл скачался — зажигаем ЗЕЛЕНЫЙ неон!
+            // Если файл прочитан — зажигаем ЗЕЛЕНЫЙ неон!
             setNetworkStatus('success');
             updateQuickButtons();
         } catch (error) {
-            console.error("Критическая ошибка сети GRVclarity:", error);
-            // Если интернета нет — зажигаем КРАСНЫЙ огонёк, ничего не работает
-            setNetworkStatus('error');
+            console.error("Критическая ошибка чтения базы данных GRVclarity:", error);
+            setNetworkStatus('error'); // Если сбой — зажигаем КРАСНЫЙ огонёк
         }
     }
 
@@ -48,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const baseUrl = aiForm.getAttribute('action') || 'https://google.ru';
         const searchUrl = `${baseUrl}?hl=ru&udm=50&q=${encodeURIComponent(finalText)}`;
         
-        // Умное разделение: в плагине открываем в новой вкладке, на телефоне — внешнее окно
+        // Умное разделение: в плагине открываем в новой вкладке, на телефоне — на месте
         if (window.self !== window.top) {
             window.open(searchUrl, '_blank');
         } else {
@@ -60,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function() {
         }, 100);
     }
 
-    // Ваша оригинальная функция отрисовки 4 динамических кнопок
+    // Функция отрисовки 4 динамических кнопок
     function updateQuickButtons() {
         if (!roleSelect || !container) return;
         const selectedText = roleSelect.options[roleSelect.selectedIndex].text.trim();
