@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const requestPayoutBtn = document.getElementById('requestPayoutBtn');
 
     // 🔥 ИСПРАВЛЕНО: Указан жесткий, прямой интернет-адрес вашей базы промптов на GitHub
-    const PROMPTS_URL = 'https://github.io';
+    const PROMPTS_URL = 'https://arximed12.github.io/GRVclarity/';
     
     // Внутренняя память сайта для хранения скачанных из сети кнопок и промптов
     let cloudData = {};
