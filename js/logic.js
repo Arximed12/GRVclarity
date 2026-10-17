@@ -71,8 +71,14 @@ document.addEventListener("DOMContentLoaded", function() {
         const baseUrl = aiForm.getAttribute('action') || 'https://google.ru';
         const searchUrl = `${baseUrl}?hl=ru&udm=50&q=${encodeURIComponent(finalText)}`;
         
-        // Перенаправление без жесткого перезапуска формы, спасающее от ERR_CONNECTION_ABORTED
-        window.location.href = searchUrl;
+        // 🔥 УМНОЕ РАЗДЕЛЕНИЕ: Проверяем, запущен ли код внутри плагина
+        // Если окно открыто как iframe (плагин), принудительно открываем НОВУЮ ВКЛАДКУ, чтобы обойти блокировку Google
+        if (window.self !== window.top) {
+            window.open(searchUrl, '_blank');
+        } else {
+            // Если это обычный сайт или мобильное WebViewer приложение — делаем плавный переход на месте
+            window.location.href = searchUrl;
+        }
 
         setTimeout(() => {
             if (inputField) inputField.value = '';
