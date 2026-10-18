@@ -1,8 +1,4 @@
-/* ==========================================
-   👑 ПРЕМИУМ-СТИЛИ БРЕНДА GRVclarity (ЖИВОЙ НЕОН)
-   ========================================== */
-
-/* Общие стили для всего интерфейса */
+/* Базовые настройки окружения */
 body { 
     background: linear-gradient(135deg, #0b0f19, #111827); 
     color: #f3f4f6; 
@@ -11,96 +7,78 @@ body {
     margin: 0;
     box-sizing: border-box;
     width: 100%;
-    min-width: 250px;
     height: 100vh;
     overflow-x: hidden;
 }
-.wrapper { display: flex; flex-direction: column; align-items: center; text-align: center; height: 100%; width: 100%; }
 
-/* 🔥 АНИМАЦИЯ: Плавный гипнотический перелив из синего в фиолетовый и обратно */
+.wrapper { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    text-align: center; 
+    width: 100%; 
+}
+
+/* ==========================================
+   🔥 ЖИВАЯ НЕОНОВАЯ АНИМАЦИЯ (ЦВЕТОВОЙ ПЕРЕЛИВ)
+   ========================================== */
 @keyframes neonBreathe {
-    0% {
-        border-color: #2563eb;
-        box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
-    }
-    50% {
-        border-color: #7c3aed;
-        box-shadow: 0 0 22px rgba(124, 58, 237, 0.7);
-    }
-    100% {
-        border-color: #2563eb;
-        box-shadow: 0 0 12px rgba(37, 99, 235, 0.4);
-    }
+    0% { border-color: #2563eb; box-shadow: 0 0 12px rgba(37, 99, 235, 0.4); }
+    50% { border-color: #7c3aed; box-shadow: 0 0 22px rgba(124, 58, 237, 0.7); }
+    100% { border-color: #2563eb; box-shadow: 0 0 12px rgba(37, 99, 235, 0.4); }
 }
 
-/* 🔥 АНИМАЦИЯ: Перелив текстового неона для главного заголовка */
 @keyframes neonTextBreathe {
-    0% {
-        color: #818cf8;
-        text-shadow: 0 0 12px rgba(37, 99, 235, 0.6);
-    }
-    50% {
-        color: #a78bfa;
-        text-shadow: 0 0 22px rgba(124, 58, 237, 0.9);
-    }
-    100% {
-        color: #818cf8;
-        text-shadow: 0 0 12px rgba(37, 99, 235, 0.6);
-    }
+    0% { color: #818cf8; text-shadow: 0 0 12px rgba(37, 99, 235, 0.5); }
+    50% { color: #a78bfa; text-shadow: 0 0 22px rgba(124, 58, 237, 0.8); }
+    100% { color: #818cf8; text-shadow: 0 0 12px rgba(37, 99, 235, 0.5); }
 }
 
-/* 🔥 АНИМАЦИЯ: Пульсация зеленого огонька сети (Пульс системы) */
 @keyframes networkPulse {
-    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 8px #22c55e; }
+    0% { transform: scale(1); opacity: 1; box-shadow: 0 0 6px #22c55e; }
     50% { transform: scale(1.15); opacity: 0.7; box-shadow: 0 0 14px #22c55e; }
-    100% { transform: scale(1); opacity: 1; box-shadow: 0 0 8px #22c55e; }
+    100% { transform: scale(1); opacity: 1; box-shadow: 0 0 6px #22c55e; }
 }
 
-/* Верхняя системная панель */
+/* Фикс верхней панели (растаскивает элементы строго по левому и правому краям) */
 .top-status-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 25px;
     box-sizing: border-box;
 }
 
-/* Огонек связи */
 .network-status {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 12px;
+    gap: 8px;
+    font-size: 13px;
     font-weight: 500;
     color: #9ca3af;
 }
+
 .status-dotIndicator {
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    transition: all 0.3s ease;
+    display: inline-block;
 }
 .status-dotIndicator.yellow { background: #eab308; box-shadow: 0 0 8px #eab308; }
-/* Подключили живой пульс к зеленому индикатору */
-.status-dotIndicator.green { 
-    background: #22c55e; 
-    animation: networkPulse 2s infinite ease-in-out; 
-}
+.status-dotIndicator.green { background: #22c55e; animation: networkPulse 2s infinite ease-in-out; }
 .status-dotIndicator.red { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
 
-/* Кнопка-плашка баланса вверху */
 .balance-badge {
     background: rgba(31, 41, 55, 0.6);
     border: 1px solid #4338ca;
-    padding: 6px 12px;
+    padding: 6px 14px;
     border-radius: 20px;
     font-size: 13px;
     font-weight: bold;
     color: #ffffff;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 0 10px rgba(67, 56, 202, 0.3);
 }
 .balance-badge:hover {
     transform: translateY(-1px);
@@ -108,28 +86,28 @@ body {
     box-shadow: 0 0 15px rgba(129, 140, 248, 0.5);
 }
 
-/* Главный заголовок с живым неоном */
+/* Главные элементы бренда */
 h1 { 
-    font-size: 24px; 
+    font-size: 26px; 
     font-weight: bold; 
-    margin-bottom: 5px; 
+    margin: 10px 0 5px 0; 
     letter-spacing: 2px; 
-    animation: neonTextBreathe 7s infinite ease-in-out; /* Включили перелив цвета */
+    animation: neonTextBreathe 7s infinite ease-in-out;
 }
-.subtitle { color: #4f46e5; font-size: 11px; font-weight: 600; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
 
-/* Круглый логотип с живой дышащей рамкой */
+.subtitle { color: #4f46e5; font-size: 11px; font-weight: 600; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; }
+
 .brand-logo-img {
-    width: 75px;
-    height: 75px;
-    margin-top: 5px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     border: 2px solid #2563eb;
-    animation: neonBreathe 7s infinite ease-in-out; /* Дышит в такт заголовку */
+    animation: neonBreathe 7s infinite ease-in-out;
     box-sizing: border-box;
+    object-fit: cover;
 }
 
-/* Выпадающий список с плавным переливом граней */
+/* Компоненты формы ввода и селекта */
 .module-select {
     width: 100%; background: #1f2937; color: #ffffff;
     padding: 12px; border-radius: 12px; font-size: 14px; margin-bottom: 15px;
@@ -138,52 +116,38 @@ h1 {
     animation: neonBreathe 7s infinite ease-in-out;
 }
 
-/* Поле ввода с плавным переливом граней */
 .input-box {
     background: rgba(31, 41, 55, 0.6); border-radius: 16px;
-    padding: 8px 12px; width: 100%; box-sizing: border-box; margin-bottom: 15px;
+    padding: 8px 12px; width: 100%; box-sizing: border-box; margin-bottom: 20px;
     display: flex; align-items: center; gap: 10px;
     border: 2px solid #2563eb;
     animation: neonBreathe 7s infinite ease-in-out;
 }
-input[type="text"] { 
-    flex: 1; 
-    background-color: transparent !important; /* Намертво убирает белую подложку браузера */
-    background: transparent !important;
-    border: none !important; 
-    color: #ffffff !important; /* Делает вводимые буквы идеально белыми */
-    outline: none !important; 
-    font-size: 16px; 
-    width: 100%; 
-    padding-right: 5px; 
-}
 
+input[type="text"] { flex: 1; background: transparent; border: none; color: white; outline: none; font-size: 16px; width: 100%; }
 input[type="text"]::placeholder { color: #6b7280; }
 
-/* Адаптивная сетка для 4 динамических кнопок */
+/* Сетка быстрых кнопок */
 .quick-buttons-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px;
-    width: 100%; margin-bottom: 15px; box-sizing: border-box;
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px;
+    width: 100%; box-sizing: border-box;
 }
 .quick-btn {
     background: rgba(31, 41, 55, 0.4); border: 2px solid #4338ca; border-radius: 12px;
-    padding: 10px 12px; color: #f3f4f6; font-size: 14px; text-align: left; cursor: pointer;
-    transition: all 0.2s ease; display: flex; align-items: center; gap: 8px; font-weight: 500; box-sizing: border-box;
+    padding: 12px; color: #f3f4f6; font-size: 13px; text-align: left; cursor: pointer;
+    transition: all 0.2s ease; display: flex; align-items: center; gap: 8px; font-weight: 500;
 }
 .quick-btn:hover { background: #1f2937; border-color: #818cf8; transform: translateY(-1px); box-shadow: 0 0 10px rgba(129, 140, 248, 0.3); }
 
-/* Круглая СИНЯЯ КНОПКА (Остается строгой и статичной, как мы договорились) */
 .send-mini-btn {
-    background: linear-gradient(135deg, #2563eb, #1d4ed8); 
-    color: white; border: none; border-radius: 50%; 
-    width: 34px; height: 34px; font-size: 14px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.2s ease; box-shadow: 0 0 10px rgba(37, 99, 235, 0.4); flex-shrink: 0; 
+    background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: none; 
+    border-radius: 50%; width: 36px; height: 36px; font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: all 0.2s ease; box-shadow: 0 0 10px rgba(37, 99, 235, 0.4);
 }
-.send-mini-btn:hover { transform: scale(1.06); background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 0 15px rgba(37, 99, 235, 0.7); }
-.send-mini-btn:active { transform: scale(0.96); }
+.send-mini-btn:hover { transform: scale(1.05); box-shadow: 0 0 15px rgba(37, 99, 235, 0.7); }
 
-/* ВСПЛЫВАЮЩЕЕ МОДАЛЬНОЕ ОКНО КОШЕЛЬКА */
+/* Модальное окно */
 .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(11, 15, 25, 0.7); backdrop-filter: blur(8px); 
@@ -193,20 +157,19 @@ input[type="text"]::placeholder { color: #6b7280; }
 .modal-overlay.active { opacity: 1; pointer-events: auto; }
 .modal-content-card {
     background: linear-gradient(135deg, #111827, #1f2937); border: 2px solid #4338ca;
-    border-radius: 24px; padding: 24px; width: 90%; max-width: 320px; position: relative;
-    text-align: center; box-shadow: 0 0 30px rgba(67, 56, 202, 0.5); transform: scale(0.9); transition: all 0.3s ease;
+    border-radius: 24px; padding: 24px; width: 90%; max-width: 320px; position: relative; text-align: center;
+    box-shadow: 0 0 30px rgba(67, 56, 202, 0.5); transform: scale(0.9); transition: all 0.3s ease;
 }
 .modal-overlay.active .modal-content-card { transform: scale(1); }
-.modal-close-xBtn { position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #9ca3af; font-size: 18px; cursor: pointer; transition: color 0.2s; }
+.modal-close-xBtn { position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #9ca3af; font-size: 18px; cursor: pointer; }
 .modal-close-xBtn:hover { color: #ffffff; }
-.modal-title { color: #818cf8; font-size: 20px; margin: 0 0 10px 0; letter-spacing: 1px; }
+.modal-title { color: #818cf8; font-size: 20px; margin-bottom: 10px; letter-spacing: 1px; }
 .user-id-badge { display: inline-block; background: rgba(67, 56, 202, 0.3); padding: 4px 10px; border-radius: 8px; font-size: 11px; color: #a5b4fc; margin-bottom: 15px; font-family: monospace; }
 .modal-balance-section { background: rgba(11, 15, 25, 0.4); border-radius: 16px; padding: 15px; margin-bottom: 20px; border: 1px solid rgba(67, 56, 202, 0.2); }
 .modal-balance-label { font-size: 12px; color: #9ca3af; text-transform: uppercase; margin-bottom: 5px; }
 .modal-balance-amount { font-size: 28px; font-weight: bold; color: #22c55e; text-shadow: 0 0 10px rgba(34, 197, 94, 0.4); }
-.qr-container-box { background: #ffffff; width: 160px; height: 160px; margin: 0 auto 15px auto; border-radius: 12px; display: flex; justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; box-shadow: 0 0 15px rgba(255,255,255,0.1); }
+.qr-container-box { background: #ffffff; width: 160px; height: 160px; margin: 0 auto 15px auto; border-radius: 12px; display: flex; justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; }
 .qr-placeholder-text { color: #111827; font-size: 11px; font-weight: bold; line-height: 1.4; }
 .bonus-promo-info-text { font-size: 12px; color: #d1d5db; line-height: 1.5; margin-bottom: 20px; text-align: left; }
-.payout-action-btn { width: 100%; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 12px; border-radius: 14px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 0 15px rgba(34, 197, 94, 0.3); }
-.payout-action-btn:hover { transform: scale(1.03); background: linear-gradient(135deg, #4ade80, #22c55e); box-shadow: 0 0 20px rgba(34, 197, 94, 0.5); }
-.payout-action-btn:active { transform: scale(0.98); }
+.payout-action-btn { width: 100%; background: linear-gradient(135deg, #22c55e, #16a34a); color: white; border: none; padding: 12px; border-radius: 14px; font-size: 14px; font-weight: bold; cursor: pointer; transition: all 0.2s ease; }
+.payout-action-btn:hover { transform: scale(1.02); background: linear-gradient(135deg, #4ade80, #22c55e); }
