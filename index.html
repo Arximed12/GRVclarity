@@ -2,25 +2,30 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <!-- Блокировка масштабирования (убирает лупы +/- на смартфонах) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>GRVclarity</title>
-    <!-- Подключаем наш общий файл стилей -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="wrapper">
-        <!-- ВЕРХНЯЯ СЛУЖЕБНАЯ ПАНЕЛЬ СЕТИ GRV -->
-        <div class="top-navAdminBar">
-            <div class="status-indicatorBox" id="netStatus" title="Статус сети: Проверка подключения...">
-                <span class="status-dotIndicator"></span>
-                <span class="status-textLabel">Сеть</span>
-            </div>
-            <button class="wallet-triggerBtn" id="openWalletBtn">👛 0 ₽</button>
+    <!-- ВЕРХНЯЯ ПАНЕЛЬ СТАТУСА -->
+    <div class="top-status-bar">
+        <div class="network-status" id="netStatus" title="Статус сети: Подключение...">
+            <span class="status-dotIndicator yellow"></span>
+            <span class="status-text">Сеть</span>
         </div>
+        <div class="balance-badge" id="openWalletBtn" title="Открыть кошелек и QR-код">
+            👛 <span id="topBalanceValue">0</span> ₽
+        </div>
+    </div>
 
+    <div class="wrapper">
+        <!-- Логотип бренда (требует наличия файла GRV.png в корне) -->
+        <img src="GRV.png" alt="GRVclarity Логотип" class="brand-logo-img" onerror="this.style.display='none'; console.warn('Файл GRV.png не найден в корне репозитория!');">
+        
         <h1>GRVclarity</h1>
         <div class="subtitle">👑 Премиальный ИИ-Ассистент</div>
         
-        <!-- Категории, которые строго совпадают с кнопками в data.json -->
         <select id="aiRole" class="module-select">
             <option value="действуй строго по законам РФ как высококвалифицированный юрист." selected>⚖️ Юриспруденция и Защита прав</option>
             <option value="действуй как эксперт по маркетплейсам Wildberries, Ozon и Яндекс.Маркет.">📦 Маркетплейсы (WB, Ozon, Я.Маркет)</option>
@@ -28,45 +33,39 @@
             <option value="действуй как профессиональный маркетолог, копирайтер и бизнес-консультант.">💼 Услуги и Бизнес</option>
         </select>
 
-        <!-- ДОБАВИЛИ autocomplete="off" ДЛЯ ВСЕЙ ФОРМЫ -->
-        <form action="https://google.ru" method="GET" target="_blank" id="aiForm" style="width: 100%;" autocomplete="off">
+        <form action="https://google.ru" method="GET" target="_blank" id="aiForm" style="width: 100%;">
             <input type="hidden" name="hl" value="ru">
             <input type="hidden" name="udm" value="50">
             
             <div class="input-box">
-                <!-- ДОБАВИЛИ autocomplete="off" СТРОГО В ПОЛЕ ВВОДА -->
-                <input type="text" name="q" id="userQuery" placeholder="Опишите вашу проблему или выберите вопрос ниже..." required autocomplete="off">
+                <input type="text" name="q" id="userQuery" placeholder="Опишите вашу проблему или выберите вопрос ниже..." required>
                 <button type="submit" class="send-mini-btn" title="Отправить запрос">➔</button>
             </div>
             
-            <!-- Сюда наш движок теперь будет красиво выводить 4 кнопки с вопросами -->
             <div class="quick-buttons-grid" id="dynamic-buttons-container"></div>
         </form>
     </div>
 
-    <!-- ВСПЛЫВАЮЩЕЕ ОКНО: ЛИЧНЫЙ КАБИНЕТ И БАЛАНС -->
-    <div class="wallet-modalOverlay" id="walletModal">
-        <div class="wallet-modalCard">
-            <button class="wallet-closeBtn" id="closeWalletBtn">✕</button>
-            <h3>Личный кабинет GRV</h3>
-            <div class="user-idBadge">ID: <span id="userStaticID">Загрузка...</span></div>
-            
-            <div class="balance-container">
-                <span class="balance-title">Текущий баланс</span>
-                <span class="balance-value" id="modalBalanceValue">0 ₽</span>
+    <!-- ВСПЛЫВАЮЩЕЕ ОКНО КОШЕЛЬКА -->
+    <div class="modal-overlay" id="walletModal">
+        <div class="modal-content-card">
+            <button class="modal-close-xBtn" id="closeWalletBtn">✕</button>
+            <h3 class="modal-title">Личный кабинет GRV</h3>
+            <div class="user-id-badge">ID: <span id="userStaticID">Загрузка...</span></div>
+            <div class="modal-balance-section">
+                <div class="modal-balance-label">Текущий баланс</div>
+                <div class="modal-balance-amount"><span id="modalBalanceValue">0</span> ₽</div>
             </div>
-            
-            <div class="qr-placeholderBox">Заготовка QR-кода</div>
-            <div class="referral-linkInput">ссылка для приглашения друзей</div>
-            
-            <p class="referral-hintText">🎁 Делитесь вашим личным QR-кодом! Получайте по **100 рублей** за каждую первую оплаченную подписку привлеченного пользователя.</p>
-            
-            <button class="payout-actionBtn" id="requestPayoutBtn">Вывести средства</button>
+            <div class="qr-container-box">
+                <div class="qr-placeholder-text">Заготовка QR-кода<br><small style="color: #6b7280;">ссылка для приглашения</small></div>
+            </div>
+            <p class="bonus-promo-info-text">🎁 Делитесь личным QR-кодом! Получайте по <strong>100 рублей</strong> за каждую первую подписку привлеченного пользователя.</p>
+            <button class="payout-action-btn" id="requestPayoutBtn">Вывести средства</button>
         </div>
     </div>
     
-    <!-- Подключаем внешние скрипты -->
     <script src="js/config.js"></script>
-    <script src="js/logic.js"></script>
+    <!-- Добавлен хвостик версии для сброса ленивого кэша браузеров -->
+    <script src="js/logic.js?v=4.1"></script>
 </body>
 </html>
